@@ -1,6 +1,6 @@
 
-#include "lvgl.h"
 #include "picture.h"
+
 
 const lv_img_dsc_t humidity = {
 .header.always_zero = 0,

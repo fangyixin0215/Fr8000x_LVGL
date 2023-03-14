@@ -376,9 +376,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--preinclude app_config.h</MiscControls>
-              <Define>LV_BUILD_TEST=1</Define>
+              <Define>LV_BUILD_TEST=1,LV_LVGL_H_INCLUDE_SIMPLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\components\ble\include;..\..\..\..\components\driver\include;..\..\..\..\components\ble\include\gap;..\..\..\..\components\ble\include\gatt;..\..\..\..\components\ble\profiles\ble_simple_profile;..\..\..\..\components\modules\os\include;..\..\..\..\components\modules\sys\include;..\..\..\..\components\modules\platform\include;..\..\..\..\components\modules\platform\include\cmsis;..\..\..\..\components\modules\common\include;..\..\..\..\components\modules\lowpow\include;..\..\..\..\components\modules\button;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl_example;..\..\..\..\components\driver\drv_common;..\..\..\..\components\driver\components\display;..\..\..\..\components\driver\components\touchpad;..\code;..\code\scroll_menu;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl\src\misc;..\code\window;..\code\language;..\code\Jlink_RTT;..\code\button_driver;..\code\picture;..\..\..\..\components\ble\profiles\ble_ota;..\code\menu</IncludePath>
+              <IncludePath>..\..\..\..\components\ble\include;..\..\..\..\components\driver\include;..\..\..\..\components\ble\include\gap;..\..\..\..\components\ble\include\gatt;..\..\..\..\components\ble\profiles\ble_simple_profile;..\..\..\..\components\modules\os\include;..\..\..\..\components\modules\sys\include;..\..\..\..\components\modules\platform\include;..\..\..\..\components\modules\platform\include\cmsis;..\..\..\..\components\modules\common\include;..\..\..\..\components\modules\lowpow\include;..\..\..\..\components\modules\button;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl_example;..\..\..\..\components\driver\drv_common;..\..\..\..\components\driver\components\display;..\..\..\..\components\driver\components\touchpad;..\code;..\code\scroll_menu;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl\src\misc;..\code\window;..\code\language;..\code\Jlink_RTT;..\code\button_driver;..\code\picture;..\..\..\..\components\ble\profiles\ble_ota;..\code\menu;..\code\user_app</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,11 +448,6 @@
               <FilePath>..\code\gui_main.c</FilePath>
             </File>
             <File>
-              <FileName>button.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\modules\button\button.c</FilePath>
-            </File>
-            <File>
               <FileName>app_at.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\code\app_at.c</FilePath>
@@ -463,29 +458,54 @@
               <FilePath>..\..\..\..\components\modules\common\src\co_log.c</FilePath>
             </File>
             <File>
-              <FileName>user_main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\code\user_main.c</FilePath>
-            </File>
-            <File>
-              <FileName>user_menu_handle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\code\menu\user_menu_handle.c</FilePath>
-            </File>
-            <File>
-              <FileName>user_menu_page.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\code\menu\user_menu_page.c</FilePath>
-            </File>
-            <File>
-              <FileName>user_menu_setting.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\code\menu\user_menu_setting.c</FilePath>
-            </File>
-            <File>
               <FileName>gif_decoder.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\code\gif_decoder.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>user_app</GroupName>
+          <Files>
+            <File>
+              <FileName>user_knob_home.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_home.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_main.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_power.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_setting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_setting.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_temp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_temp.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_wash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_wash.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_knob_water_level.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\user_app\user_knob_water_level.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -13,9 +13,9 @@
 #include "driver_exti.h"
 #include "co_printf.h"
 #include "os_timer.h"
-#include "user_main.h"
+
 #include "key_driver.h"
-#include "user_menu_handle.h"
+#include "user_knob_config.h"
 #include "driver_ktm57xx.h"
 
 
@@ -101,6 +101,8 @@ static void check_handle_cb(void *parm)
 		}
 }
 
+extern uint8_t g_key_code;
+
 /************************************************************
   * @brief   编码器按键检测状态回调
   * @param   name : NULL
@@ -110,7 +112,6 @@ static void check_handle_cb(void *parm)
   ***********************************************************/
 static void encoder_handle_cb(void *parm)
 {
-		os_event_t gui_page_event; 
 		key_scanf();//扫描
 	  uint8_t keycode=read_key_fifo();//读取数据
 	  if(keycode!=0)
@@ -118,17 +119,14 @@ static void encoder_handle_cb(void *parm)
 			switch(keycode)
 			{
 				case KEY1_SHORT_EVENT:
-						gui_page_event.event_id = USER_GUI_EVT_ENCODER_SHORT_PRESS; 
+						 g_key_code=ENTER_CODE;
 						break;                     
 				case KEY1_DUAL_EVENT:
 						break;
 				case KEY1_LONG_EVENT:
-						gui_page_event.event_id = USER_GUI_EVT_ENCODER_LONG_PRESS;
+						 g_key_code=DBLCLICK_CODE;
 						break;
-			}   
-			gui_page_event.param = &keycode; 
-			gui_page_event.param_len = 1; 
-			os_msg_post(get_user_menu_task_id(), &gui_page_event);//消息发送
+			}  
 			
 		}
 }
@@ -142,27 +140,19 @@ static void encoder_handle_cb(void *parm)
   ***********************************************************/
 __attribute__((section("ram_code"))) void ec11_exti_handle(void)
 {
-	static int16_t ec_cnt=0;
 	uint8_t keycode=0;
 	static uint32_t last_trigger_time=0;
-	os_event_t gui_page_event; 
 	if (exti_get_LineStatus(EC11_EXTI_LINE))
 	{
 				if(g_key_lock_flag==0)
 				{
 						if(gpio_read_pin(EC11_DIR_PORT, EC11_DIR_GPIO_NUM)==0)
 						{
-							   (ec_cnt> 0) ? (ec_cnt--) : (ec_cnt = 6)  ;
-							   gui_page_event.event_id = USER_GUI_EVT_ENCODER_RIGHT; 
+							  g_key_code = RIGHT_CODE;
 						}else
 						{
-							  (ec_cnt< 6) ? (ec_cnt++) : (ec_cnt = 0)  ;
-							   gui_page_event.event_id = USER_GUI_EVT_ENCODER_LEFT; 
+							  g_key_code = LEFT_CODE;
 						}
-						gui_page_event.param = &ec_cnt; 
-						gui_page_event.param_len = 1; 
-						exti_interrupt_disable(EC11_EXTI_LINE);
-						os_msg_post(get_user_menu_task_id(), &gui_page_event);
 						g_key_lock_flag=1;
 			 }
 //			if((system_get_curr_time()-last_trigger_time) >180)

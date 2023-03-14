@@ -1,47 +1,65 @@
 
-#define    humidity_map    (uint8_t *)(0x10200004) 
-#define    switch_off_map    (uint8_t *)(0x10201B08) 
-#define    switch_on_map    (uint8_t *)(0x10210E0C) 
-#define    temperature_map    (uint8_t *)(0x10220110) 
-#define    watch_time00_map    (uint8_t *)(0x10221C14) 
-#define    watch_time01_map    (uint8_t *)(0x10223850) 
-#define    watch_time02_map    (uint8_t *)(0x1022548C) 
-#define    watch_time03_map    (uint8_t *)(0x102270C8) 
-#define    watch_time04_map    (uint8_t *)(0x10228D04) 
-#define    watch_time05_map    (uint8_t *)(0x1022A940) 
-#define    watch_time06_map    (uint8_t *)(0x1022C57C) 
-#define    watch_time07_map    (uint8_t *)(0x1022E1B8) 
-#define    watch_time08_map    (uint8_t *)(0x1022FDF4) 
-#define    watch_time09_map    (uint8_t *)(0x10231A30) 
-#define    xn_cam_map    (uint8_t *)(0x1023366C) 
-#define    xn_chuang_map    (uint8_t *)(0x102345A0) 
-#define    xn_count_map    (uint8_t *)(0x10254A70) 
-#define    xn_ct_map    (uint8_t *)(0x102559A4) 
-#define    xn_curtain_main_map    (uint8_t *)(0x102790D8) 
-#define    xn_gd_map    (uint8_t *)(0x1027C0DC) 
-#define    xn_group_map    (uint8_t *)(0x1029C5AC) 
-#define    xn_huoh_map    (uint8_t *)(0x102DD95C) 
-#define    xn_iphone_map    (uint8_t *)(0x102DE890) 
-#define    xn_led_map    (uint8_t *)(0x102DF7C4) 
-#define    xn_ledadj_main_map    (uint8_t *)(0x10302EF8) 
-#define    xn_led_main_map    (uint8_t *)(0x10305EFC) 
-#define    xn_led_status_off_map    (uint8_t *)(0x10308F00) 
-#define    xn_led_status_on_map    (uint8_t *)(0x1030BF04) 
-#define    xn_music_map    (uint8_t *)(0x1030EF08) 
-#define    xn_play_map    (uint8_t *)(0x1030FE3C) 
-#define    xn_pwoer_map    (uint8_t *)(0x10311B8C) 
-#define    xn_shouye_map    (uint8_t *)(0x103352C0) 
-#define    xn_smart_map    (uint8_t *)(0x10355790) 
-#define    xn_start_map    (uint8_t *)(0x10375C60) 
-#define    xn_stop_map    (uint8_t *)(0x10376864) 
-#define    xn_sw_map    (uint8_t *)(0x103785B4) 
-#define    xn_temppage_map    (uint8_t *)(0x1039BCE8) 
-#define    xn_temp_contrl_map    (uint8_t *)(0x103BF41C) 
-#define    xn_time_map    (uint8_t *)(0x103C2420) 
-#define    xn_tuos_map    (uint8_t *)(0x103C3F24) 
-#define    xn_xueh_map    (uint8_t *)(0x103E7658) 
-#define    xn_xyj_map    (uint8_t *)(0x103E858C) 
+#ifndef __PICTURE_H__
+#define __PICTURE_H__
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#include "lvgl.h"
+#else
+#include "lvgl/lvgl.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define    img_head_offset    (0x10200000) 
 
 
 
+#define    humidity_map                   (uint8_t*)(img_head_offset+0x4) 
+#define    switch_off_map                   (uint8_t*)(img_head_offset+0x1B08) 
+#define    switch_on_map                   (uint8_t*)(img_head_offset+0x10E0C) 
+#define    temperature_map                   (uint8_t*)(img_head_offset+0x20110) 
+#define    watch_time00_map                   (uint8_t*)(img_head_offset+0x21C14) 
+#define    watch_time01_map                   (uint8_t*)(img_head_offset+0x23850) 
+#define    watch_time02_map                   (uint8_t*)(img_head_offset+0x2548C) 
+#define    watch_time03_map                   (uint8_t*)(img_head_offset+0x270C8) 
+#define    watch_time04_map                   (uint8_t*)(img_head_offset+0x28D04) 
+#define    watch_time05_map                   (uint8_t*)(img_head_offset+0x2A940) 
+#define    watch_time06_map                   (uint8_t*)(img_head_offset+0x2C57C) 
+#define    watch_time07_map                   (uint8_t*)(img_head_offset+0x2E1B8) 
+#define    watch_time08_map                   (uint8_t*)(img_head_offset+0x2FDF4) 
+#define    watch_time09_map                   (uint8_t*)(img_head_offset+0x31A30) 
+#define    xn_cam_map                   (uint8_t*)(img_head_offset+0x3366C) 
+#define    xn_chuang_map                   (uint8_t*)(img_head_offset+0x345A0) 
+#define    xn_count_map                   (uint8_t*)(img_head_offset+0x54A70) 
+#define    xn_ct_map                   (uint8_t*)(img_head_offset+0x559A4) 
+#define    xn_curtain_main_map                   (uint8_t*)(img_head_offset+0x790D8) 
+#define    xn_gd_map                   (uint8_t*)(img_head_offset+0x7C0DC) 
+#define    xn_group_map                   (uint8_t*)(img_head_offset+0x9C5AC) 
+#define    xn_huoh_map                   (uint8_t*)(img_head_offset+0xDD95C) 
+#define    xn_iphone_map                   (uint8_t*)(img_head_offset+0xDE890) 
+#define    xn_led_map                   (uint8_t*)(img_head_offset+0xDF7C4) 
+#define    xn_ledadj_main_map                   (uint8_t*)(img_head_offset+0x102EF8) 
+#define    xn_led_main_map                   (uint8_t*)(img_head_offset+0x105EFC) 
+#define    xn_led_status_off_map                   (uint8_t*)(img_head_offset+0x108F00) 
+#define    xn_led_status_on_map                   (uint8_t*)(img_head_offset+0x10BF04) 
+#define    xn_music_map                   (uint8_t*)(img_head_offset+0x10EF08) 
+#define    xn_play_map                   (uint8_t*)(img_head_offset+0x10FE3C) 
+#define    xn_pwoer_map                   (uint8_t*)(img_head_offset+0x111B8C) 
+#define    xn_shouye_map                   (uint8_t*)(img_head_offset+0x1352C0) 
+#define    xn_smart_map                   (uint8_t*)(img_head_offset+0x155790) 
+#define    xn_stop_map                   (uint8_t*)(img_head_offset+0x175C60) 
+#define    xn_sw_map                   (uint8_t*)(img_head_offset+0x1779B0) 
+#define    xn_temppage_map                   (uint8_t*)(img_head_offset+0x19B0E4) 
+#define    xn_temp_contrl_map                   (uint8_t*)(img_head_offset+0x1BE818) 
+#define    xn_time_map                   (uint8_t*)(img_head_offset+0x1C181C) 
+#define    xn_tuos_map                   (uint8_t*)(img_head_offset+0x1C3320) 
+#define    xn_xueh_map                   (uint8_t*)(img_head_offset+0x1E6A54) 
+#define    xn_xyj_map                   (uint8_t*)(img_head_offset+0x1E7988) 
+#ifdef __cplusplus
+}
+#endif
 
+
+
+#endif

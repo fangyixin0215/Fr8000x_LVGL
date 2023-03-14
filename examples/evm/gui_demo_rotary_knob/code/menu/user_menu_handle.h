@@ -1,9 +1,6 @@
 #ifndef __USER_MENU_HANDLE_H
 #define __USER_MENU_HANDLE_H
 
-#include "user_menu_config.h"
-#include "user_menu_page.h"
-#include "user_main.h"
 
 typedef struct
 {

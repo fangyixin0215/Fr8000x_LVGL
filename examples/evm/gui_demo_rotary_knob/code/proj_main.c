@@ -29,8 +29,6 @@
 #include "simple_gatt_service.h"
 #include "co_log.h"
 #include "dma_refresh_lvgl.h"
- 
-#include "button.h"
 #include "driver_ktm57xx.h"
 
 #undef LOG_LOCAL_LEVEL
@@ -59,14 +57,6 @@ const struct jump_table_image_t _jump_table_image __attribute__((section("jump_t
     .image_size = 0x80000,      
 };
 
-
-__attribute__((section("ram_code"))) void pmu_gpio_isr_ram(void)
-{
-    uint32_t gpio_value = ool_read32(PMU_REG_PORTA_V);
-    
-    button_toggle_detected(gpio_value);
-    ool_write32(PMU_REG_PORTA_LAST_STATUS, gpio_value);
-}
 /*********************************************************************
  * @fn      user_custom_parameters
  *
@@ -233,7 +223,7 @@ void proj_init(void)
  */
 void user_main(void)
 {
-mac_addr_t mac_addr;
+		mac_addr_t mac_addr;
 
     /* initialize log module */
     log_init();

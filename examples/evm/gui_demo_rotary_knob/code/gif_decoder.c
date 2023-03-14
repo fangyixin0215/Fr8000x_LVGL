@@ -11,7 +11,6 @@
 #include "os_timer.h"
 #include "driver_timer.h"
 #include "driver_st77903.h"
-#include "user_main.h"
 #include "sys_utils.h"
 
 #define FREQCHIP_LOGO  1

@@ -5,7 +5,6 @@
 #include "os_msg_q.h"
 #include "os_task.h"
 #include "sys_utils.h"
-#include "user_menu_handle.h"
 
 
 
@@ -416,7 +415,7 @@ uint16_t ktm57xx_read_angle(void)
   ***********************************************************/
 void ktm57xx_readdata_handle(void)
 {
-		os_event_t gui_page_event; 
+//		os_event_t gui_page_event; 
 	  uint8_t event_val=0;
 		g_ktm57xx_param.angle = ktm57xx_read_angle();
 	  //printf("angle %d  %d\r\n",g_ktm57xx_param.angle,system_get_curr_time());
@@ -428,31 +427,31 @@ void ktm57xx_readdata_handle(void)
 					 if(g_ktm57xx_param.last_angle>g_ktm57xx_param.angle) 	
 					 {
 							printf("left %d  %d \r\n",g_ktm57xx_param.angle,g_ktm57xx_param.last_angle);
-						  event_val = USER_GUI_EVT_ENCODER_LEFT;
+//						  event_val = USER_GUI_EVT_ENCODER_LEFT;
 					 }
 					 else
 					 {
 					   printf("right %d  %d \r\n",g_ktm57xx_param.angle,g_ktm57xx_param.last_angle);
-						 event_val= USER_GUI_EVT_ENCODER_RIGHT; 
+//						 event_val= USER_GUI_EVT_ENCODER_RIGHT; 
 					 }
 				}
 			  else if((temp_val>JUDGE_ANGLE_LEFT))
 				{
-					 event_val= USER_GUI_EVT_ENCODER_LEFT; 
+//					 event_val= USER_GUI_EVT_ENCODER_LEFT; 
 					 printf("left %d  %d \r\n",g_ktm57xx_param.angle,g_ktm57xx_param.last_angle);
 				}
 				else if(temp_val<JUDGE_ANGLE_RIGHT)
 				{
-					  event_val = USER_GUI_EVT_ENCODER_RIGHT; 
+//					  event_val = USER_GUI_EVT_ENCODER_RIGHT; 
 						printf("right %d  %d \r\n",g_ktm57xx_param.angle,g_ktm57xx_param.last_angle);
 				}
 			if((event_val != 0) && ((system_get_curr_time()-g_ktm57xx_param.last_trigger_time) > KTM57XX_SHAKE_TIME))
 			{
-				g_ktm57xx_param.last_trigger_time=system_get_curr_time();
-				gui_page_event.event_id = event_val; 
-				gui_page_event.param = &event_val; 
-				gui_page_event.param_len = 1; 
-				os_msg_post(get_user_menu_task_id(), &gui_page_event);
+//					g_ktm57xx_param.last_trigger_time=system_get_curr_time();
+//					gui_page_event.event_id = event_val; 
+//					gui_page_event.param = &event_val; 
+//					gui_page_event.param_len = 1; 
+//					os_msg_post(get_user_menu_task_id(), &gui_page_event);
 			}
 		}
 		g_ktm57xx_param.Density_Y = ( g_ktm57xx_param.read_data[5] << 8) + g_ktm57xx_param.read_data[6];

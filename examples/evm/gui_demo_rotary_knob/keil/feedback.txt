@@ -1,4 +1,4 @@
-;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Mon Mar 06 18:45:23 2023
+;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Tue Mar 14 18:25:38 2023
 ;VERSION 0.2
 ;FILE adv_check_mode.o
 __asm___16_adv_check_mode_c_9741a236____REV16 <= USED 0
@@ -92,14 +92,6 @@ __asm___6_atts_c_ca3f1c07____REVSH <= USED 0
 __asm___6_atts_c_ca3f1c07____RRX <= USED 0
 ;FILE ble_simple_peripheral.o
 ;FILE boot_vectors.o
-;FILE button.o
-__asm___8_button_c_078da5ff____REV16 <= USED 0
-__asm___8_button_c_078da5ff____REVSH <= USED 0
-__asm___8_button_c_078da5ff____RRX <= USED 0
-button_init <= USED 0
-button_int_isr <= USED 0
-button_send_event <= USED 0
-button_toggle_detected <= USED 0
 ;FILE co_log.o
 __asm___8_co_log_c_f9bf2c1a____REV16 <= USED 0
 __asm___8_co_log_c_f9bf2c1a____REVSH <= USED 0
@@ -159,6 +151,7 @@ gc9c01_set_window <= USED 0
 __asm___13_driver_gpio_c_c8a4be98____REV16 <= USED 0
 __asm___13_driver_gpio_c_c8a4be98____REVSH <= USED 0
 __asm___13_driver_gpio_c_c8a4be98____RRX <= USED 0
+exti_interrupt_disable <= USED 0
 exti_set_Filter <= USED 0
 gpio_read_group <= USED 0
 gpio_set_portpull <= USED 0
@@ -515,6 +508,7 @@ __asm___10_gui_main_c_f7326d71____RRX <= USED 0
 __asm___14_input_driver_c_e079ecd7____REV16 <= USED 0
 __asm___14_input_driver_c_e079ecd7____REVSH <= USED 0
 __asm___14_input_driver_c_e079ecd7____RRX <= USED 0
+ec11_exti_handle <= USED 0
 ;FILE jump_table_host.o
 __asm___17_jump_table_host_c_5f817404____REV16 <= USED 0
 __asm___17_jump_table_host_c_5f817404____REVSH <= USED 0
@@ -807,12 +801,10 @@ lv_style_set_grid_column_dsc_array <= USED 0
 lv_style_set_grid_row_align <= USED 0
 lv_style_set_grid_row_dsc_array <= USED 0
 ;FILE lv_group.o
-lv_group_create <= USED 0
 lv_group_del <= USED 0
 lv_group_focus_freeze <= USED 0
 lv_group_get_focus_cb <= USED 0
 lv_group_get_wrap <= USED 0
-lv_group_remove_all_objs <= USED 0
 lv_group_set_default <= USED 0
 lv_group_set_focus_cb <= USED 0
 lv_group_set_refocus_policy <= USED 0
@@ -882,7 +874,6 @@ lv_indev_get_key <= USED 0
 lv_indev_get_read_timer <= USED 0
 lv_indev_set_button_points <= USED 0
 lv_indev_set_cursor <= USED 0
-lv_indev_set_group <= USED 0
 ;FILE lv_indev_scroll.o
 lv_indev_scroll_get_snap_dist <= USED 0
 ;FILE lv_keyboard.o
@@ -921,9 +912,11 @@ _lv_ll_chg_list <= USED 0
 _lv_ll_ins_prev <= USED 0
 _lv_ll_move_before <= USED 0
 ;FILE lv_math.o
+lv_rand <= USED 0
 lv_sqrt <= USED 0
 ;FILE lv_mem.o
 lv_mem_deinit <= USED 0
+lv_mem_monitor <= USED 0
 lv_mem_test <= USED 0
 ;FILE lv_meter.o
 lv_meter_add_arc <= USED 0
@@ -954,7 +947,6 @@ lv_is_initialized <= USED 0
 lv_obj_get_class <= USED 0
 lv_obj_has_class <= USED 0
 lv_obj_has_state <= USED 0
-lv_obj_is_valid <= USED 0
 ;FILE lv_obj_class.o
 lv_obj_is_group_def <= USED 0
 ;FILE lv_obj_draw.o
@@ -999,7 +991,6 @@ lv_obj_set_style_border_color_filtered <= USED 0
 lv_obj_set_style_border_opa <= USED 0
 lv_obj_set_style_border_post <= USED 0
 lv_obj_set_style_border_side <= USED 0
-lv_obj_set_style_border_width <= USED 0
 lv_obj_set_style_clip_corner <= USED 0
 lv_obj_set_style_color_filter_dsc <= USED 0
 lv_obj_set_style_color_filter_opa <= USED 0
@@ -1023,12 +1014,8 @@ lv_obj_set_style_outline_color_filtered <= USED 0
 lv_obj_set_style_outline_opa <= USED 0
 lv_obj_set_style_outline_pad <= USED 0
 lv_obj_set_style_outline_width <= USED 0
-lv_obj_set_style_pad_bottom <= USED 0
 lv_obj_set_style_pad_column <= USED 0
-lv_obj_set_style_pad_left <= USED 0
-lv_obj_set_style_pad_right <= USED 0
 lv_obj_set_style_pad_row <= USED 0
-lv_obj_set_style_pad_top <= USED 0
 lv_obj_set_style_radius <= USED 0
 lv_obj_set_style_shadow_color <= USED 0
 lv_obj_set_style_shadow_color_filtered <= USED 0
@@ -1037,7 +1024,6 @@ lv_obj_set_style_shadow_ofs_y <= USED 0
 lv_obj_set_style_shadow_opa <= USED 0
 lv_obj_set_style_shadow_spread <= USED 0
 lv_obj_set_style_shadow_width <= USED 0
-lv_obj_set_style_text_color <= USED 0
 lv_obj_set_style_text_color_filtered <= USED 0
 lv_obj_set_style_text_decor <= USED 0
 lv_obj_set_style_text_letter_space <= USED 0
@@ -1051,7 +1037,6 @@ lv_obj_set_style_transition <= USED 0
 lv_obj_set_style_translate_x <= USED 0
 lv_obj_set_style_translate_y <= USED 0
 ;FILE lv_obj_tree.o
-lv_obj_clean <= USED 0
 lv_obj_del_anim_ready_cb <= USED 0
 lv_obj_del_async <= USED 0
 lv_obj_del_delayed <= USED 0
@@ -1217,6 +1202,10 @@ lv_theme_basic_init <= USED 0
 lv_theme_mono_init <= USED 0
 ;FILE lv_tileview.o
 lv_obj_set_tile <= USED 0
+lv_obj_set_tile_id <= USED 0
+lv_tileview_add_tile <= USED 0
+lv_tileview_create <= USED 0
+lv_tileview_get_tile_act <= USED 0
 ;FILE lv_timer.o
 lv_timer_create_basic <= USED 0
 lv_timer_del <= USED 0
@@ -1925,7 +1914,6 @@ __asm___11_proj_main_c_app_tag____REV16 <= USED 0
 __asm___11_proj_main_c_app_tag____REVSH <= USED 0
 __asm___11_proj_main_c_app_tag____RRX <= USED 0
 main_loop <= USED 0
-pmu_gpio_isr_ram <= USED 0
 user_custom_parameters <= USED 0
 user_init_static_memory <= USED 0
 ;FILE qrcodegen.o
@@ -1999,10 +1987,14 @@ ble_bond_read_info_from_flash <= USED 0
 ble_bond_store_info <= USED 0
 ble_bond_write_info_to_flash <= USED 0
 gatt_load_peer_svc_from_flash <= USED 0
-;FILE user_main.o
-__asm___11_user_main_c____REV16 <= USED 0
-__asm___11_user_main_c____REVSH <= USED 0
-__asm___11_user_main_c____RRX <= USED 0
+;FILE user_knob_home.o
+;FILE user_knob_led.o
+;FILE user_knob_main.o
+;FILE user_knob_power.o
+;FILE user_knob_setting.o
+;FILE user_knob_temp.o
+;FILE user_knob_wash.o
+;FILE user_knob_water_level.o
 ;FILE user_mem.o
 __asm___10_user_mem_c_7b2345d6____REV16 <= USED 0
 __asm___10_user_mem_c_7b2345d6____REVSH <= USED 0
@@ -2013,15 +2005,4 @@ ke_malloc_user <= USED 0
 show_ke_malloc <= USED 0
 show_mem_list <= USED 0
 show_msg_list <= USED 0
-;FILE user_menu_handle.o
-main_menupage_init <= USED 0
-user_page0_ui_process <= USED 0
-user_page7_ui_process <= USED 0
-user_window_page10_init <= USED 0
-user_window_page11_init <= USED 0
-user_window_page12_init <= USED 0
-user_window_page13_init <= USED 0
-user_window_page14_init <= USED 0
-user_work_ui_process <= USED 0
-;FILE user_menu_page.o
 ;FILE user_task.o

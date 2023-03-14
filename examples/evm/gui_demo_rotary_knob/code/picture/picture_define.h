@@ -1,8 +1,11 @@
 
 #ifndef __PICTURE_DEFINE_H__
 #define __PICTURE_DEFINE_H__
-#include "lvgl.h"
+#include "picture.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 LV_IMG_DECLARE(humidity)
 LV_IMG_DECLARE(switch_off)
 LV_IMG_DECLARE(switch_on)
@@ -36,7 +39,6 @@ LV_IMG_DECLARE(xn_play)
 LV_IMG_DECLARE(xn_pwoer)
 LV_IMG_DECLARE(xn_shouye)
 LV_IMG_DECLARE(xn_smart)
-LV_IMG_DECLARE(xn_start)
 LV_IMG_DECLARE(xn_stop)
 LV_IMG_DECLARE(xn_sw)
 LV_IMG_DECLARE(xn_temppage)
@@ -45,7 +47,9 @@ LV_IMG_DECLARE(xn_time)
 LV_IMG_DECLARE(xn_tuos)
 LV_IMG_DECLARE(xn_xueh)
 LV_IMG_DECLARE(xn_xyj)
-
+#ifdef __cplusplus
+}
+#endif
 
 
 

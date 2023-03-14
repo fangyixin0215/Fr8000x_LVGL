@@ -10,18 +10,17 @@
 #include "driver_timer.h"
 #include "driver_display.h"
 #include "driver_touchpad.h"
-#include "user_main.h"
 #include "driver_st77903.h"
-#include "user_menu_handle.h"
-#include "user_menu.h"
 #include "input_driver.h"
 #include "driver_ktm57xx.h"
 #include "gif_decoder.h"
+#include "user_knob_config.h"
+
 #define TOUCHPAD_ENABLED						0
 #define LV_TICK_COUNT               10
 
 static os_timer_t lv_schedule_timer;
-static os_timer_t st77903_handle_timer;
+ 
 
 static lv_disp_draw_buf_t disp_buf;
 
@@ -83,9 +82,6 @@ static void my_touchpad_read(struct _lv_indev_drv_t * indev, lv_indev_data_t * d
 		
 }
 
-struct_Timer_t Timer0_Handle;
-
-
 __attribute__((section("ram_code"))) void timer0_isr(void)
 {
     
@@ -126,19 +122,82 @@ static void lv_schedule_timer_handler(void *arg)
     lv_timer_handler();
 }
 
-static void st77903_handle_cb(void *arg)
-{
+uint8_t g_key_code=0;
+extern lv_indev_t * g_indev_keypad;
+extern void knob_return_home_page(void);
 
-	 
+/*Get the currently being pressed key.  0 if no key is pressed*/
+static uint32_t keypad_get_key(void)
+{
+    /*Your code comes here*/
+   return g_key_code;
 }
- 
+/*Get the x and y coordinates if the mouse is pressed*/
+static void mouse_get_xy(lv_coord_t * x, lv_coord_t * y)
+{
+    /*Your code comes here*/
+
+    (*x) = 0;
+    (*y) = 0;
+}
+/*Will be called by the library to read the mouse*/
+static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
+{
+    static uint32_t last_key = 0;
+    /*Get the current x and y coordinates*/
+    mouse_get_xy(&data->point.x, &data->point.y);
+    /*Get whether the a key is pressed and save the pressed key*/
+    uint32_t act_key = keypad_get_key();
+    if(act_key != 0) {
+        data->state = LV_INDEV_STATE_PR;
+        /*Translate the keys to LVGL control characters according to your key definitions*/
+        switch(act_key) {
+        case 1:
+            act_key = LV_KEY_NEXT;
+            break;
+        case 2:
+            act_key = LV_KEY_PREV;
+            break;
+        case 3:
+            act_key = LV_KEY_LEFT;
+            break;
+        case 4:
+            act_key = LV_KEY_RIGHT;
+            break;
+        case 5:
+            act_key = LV_KEY_ENTER;
+            break;
+        }
+				if(DBLCLICK_CODE == act_key)
+				{		 
+					 data->state = LV_INDEV_STATE_REL;
+					 last_key = act_key;
+           g_key_code = 0;
+					 knob_return_home_page();
+				   return;
+				}
+        last_key = act_key;
+        g_key_code = 0;
+    //    printf("%d keydown \n",last_key);
+    } else {
+        data->state = LV_INDEV_STATE_REL;
+    }
+
+    data->key = last_key;
+
+    /*Return `false` because we are not buffering and no more data to read*/
+    return;
+}
+
+
+
+
 
 void gui_main(void)
 {
 		#if(TOUCHPAD_ENABLED==1)
 		cst816_init();
 		#endif
-		
 		printf("gui_main\r\n");
     display_init();
 	 __SYSTEM_TIMER_CLK_ENABLE();
@@ -148,7 +207,6 @@ void gui_main(void)
     NVIC_EnableIRQ(TIMER0_IRQn);
 	  g_gif_show_flag=1;
 		start_gif_decoder_init();
-	  printf("gui_main111\r\n");
     lv_init();
 
 
@@ -175,35 +233,37 @@ void gui_main(void)
     disp_drv.full_refresh = 1;
     lv_disp_drv_register(&disp_drv);      /*Finally register the driver*/
 		
-	  //lv_disp_set_bg_color(last_disp,0x00);
-
     /* Implement and register a function which can read an input device. E.g. for a touch pad */
-    static lv_indev_drv_t indev_drv;                  /*Descriptor of a input device driver*/
-    lv_indev_drv_init(&indev_drv);             /*Basic initialization*/
-    indev_drv.type = LV_INDEV_TYPE_POINTER;    /*Touch pad is a pointer-like device*/
-    indev_drv.read_cb = my_touchpad_read;      /*Set your driver function*/
-    lv_indev_drv_register(&indev_drv);         /*Finally register the driver*/
+//    static lv_indev_drv_t indev_drv;                  /*Descriptor of a input device driver*/
+//    lv_indev_drv_init(&indev_drv);             /*Basic initialization*/
+//    indev_drv.type = LV_INDEV_TYPE_POINTER;    /*Touch pad is a pointer-like device*/
+//    indev_drv.read_cb = my_touchpad_read;      /*Set your driver function*/
+//    lv_indev_drv_register(&indev_drv);         /*Finally register the driver*/
+    input_encoder_init();
+		static lv_indev_drv_t indev_drv1;
+    /*Initialize your keypad or keyboard if you have*/
+    /*Register a keypad input device*/
+    lv_indev_drv_init(&indev_drv1);
+    indev_drv1.type = LV_INDEV_TYPE_KEYPAD;
+    indev_drv1.read_cb = keypad_read;
+    g_indev_keypad = lv_indev_drv_register(&indev_drv1);
 
-
-		gui_menu_task_init();
-    os_timer_init(&st77903_handle_timer, lv_schedule_timer_handler, NULL);
-    os_timer_start(&st77903_handle_timer, 10, true);
-		input_encoder_init();
+		
+	  knob_gui_init();
+    os_timer_init(&lv_schedule_timer, lv_schedule_timer_handler, NULL);
+    os_timer_start(&lv_schedule_timer, 10, true);
+		
+		
 //    timer_init(Timer1, system_get_clock_config()*1000*20, TIMER_DIV_NONE);
 //    timer_start(Timer1);
 //    NVIC_SetPriority(TIMER1_IRQn, 6);
 //    NVIC_EnableIRQ(TIMER1_IRQn);
-		
-    //test_1();
-		
+
     //lv_demo_widgets();
     //lv_demo_benchmark();
     //lv_ex_calendar_1();
     //lv_demo_music();
 		
-	  //window_manager_init();
-		// user_guitask_init();
-		//lv_example_tileview_1();
 
 }
 
