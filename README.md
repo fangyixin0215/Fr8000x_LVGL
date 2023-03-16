@@ -10,6 +10,7 @@ lvgl旋钮屏基础例程
 #### 安装教程
 
 1.  ui转换资源工具详见https://gitee.com/http1520/lh_img_conver_tools.git
+2.  模拟器工程代码详见https://gitee.com/http1520/lvgl_knob_visual_studio.git
 
 #### 使用说明
 
