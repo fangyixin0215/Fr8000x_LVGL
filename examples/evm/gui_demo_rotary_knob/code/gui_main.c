@@ -53,7 +53,8 @@ static void my_disp_flush(lv_disp_drv_t * disp, const lv_area_t * area, lv_color
 		}
 		g_update_flag=false;
 		g_update_timeout_cnt=0;
-	  while((get_st77903_send_state()==0) && (g_update_timeout_cnt<4));//ok
+		while((get_st77903_send_state()==0));
+//	  while((get_st77903_send_state()==0) && (g_update_timeout_cnt<50));
 		p_st77903_psram = (void *)color_p;
 		st77903_display(p_st77903_psram,0);
 		g_update_flag=true;
