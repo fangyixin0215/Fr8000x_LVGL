@@ -1,4 +1,4 @@
-;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Thu May 04 12:55:05 2023
+;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Mon May 22 19:50:17 2023
 ;VERSION 0.2
 ;FILE adv_check_mode.o
 __asm___16_adv_check_mode_c_9741a236____REV16 <= USED 0
@@ -29,7 +29,8 @@ user_entry_after_ble_init <= USED 0
 __asm___8_app_at_c_9e062f09____REV16 <= USED 0
 __asm___8_app_at_c_9e062f09____REVSH <= USED 0
 __asm___8_app_at_c_9e062f09____RRX <= USED 0
-app_at_uart_recv <= USED 0
+uart1_init <= USED 0
+uart_isr_int <= USED 0
 ;FILE app_conn.o
 __asm___10_app_conn_c_db682df7____REV16 <= USED 0
 __asm___10_app_conn_c_db682df7____REVSH <= USED 0
@@ -320,6 +321,17 @@ __asm___14_driver_timer_c_651163fb____REV16 <= USED 0
 __asm___14_driver_timer_c_651163fb____REVSH <= USED 0
 __asm___14_driver_timer_c_651163fb____RRX <= USED 0
 timer_get_CurrentCount <= USED 0
+;FILE driver_uart_ex.o
+__asm___16_driver_uart_ex_c_83b916d4____REV16 <= USED 0
+__asm___16_driver_uart_ex_c_83b916d4____REVSH <= USED 0
+__asm___16_driver_uart_ex_c_83b916d4____RRX <= USED 0
+uart_IRQHandler <= USED 0
+uart_receive <= USED 0
+uart_receive_DMA <= USED 0
+uart_receive_IT <= USED 0
+uart_transmit <= USED 0
+uart_transmit_DMA <= USED 0
+uart_transmit_IT <= USED 0
 ;FILE entry.o
 __asm___7_entry_c_6c79d3f1____REV16 <= USED 0
 __asm___7_entry_c_6c79d3f1____REVSH <= USED 0
@@ -1962,7 +1974,6 @@ flash_protect_disable <= USED 0
 flash_protect_enable <= USED 0
 system_enable_internal_flash_q_read <= USED 0
 system_get_baseband_time <= USED 0
-system_get_clock <= USED 0
 system_get_curr_time <= USED 0
 system_get_spare_exmem <= USED 0
 system_get_unique_ID <= USED 0

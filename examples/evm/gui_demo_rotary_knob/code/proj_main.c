@@ -197,7 +197,7 @@ void proj_init(void)
     
     // User task initialization, for buttons.
     user_task_init();
-    app_at_init();
+    uart0_init(115200);
     simple_peripheral_init();
 		
     printf(" %s size =%d\r\n",__FUNCTION__,os_get_free_heap_size());

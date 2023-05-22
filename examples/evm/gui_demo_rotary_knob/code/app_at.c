@@ -8,6 +8,7 @@
 #include "os_timer.h"
 #include "co_printf.h"
 
+#include "driver_uart_ex.h"
 #include "driver_uart.h"
 #include "plf.h"
 #include "driver_system.h"
@@ -20,8 +21,108 @@ uint8_t at_recv_buffer[AT_RECV_MAX_LEN];
 uint8_t at_recv_index = 0;
 uint8_t at_recv_state = 0;
 
-#define FLASH_READ_TEST_LENGTH      1024
-uint8_t flash_read_test_buffer[FLASH_READ_TEST_LENGTH];
+static void app_at_recv_c(uint8_t c);
+
+static UART_HandleTypeDef Uart0_handle;
+static UART_HandleTypeDef Uart1_handle;
+void uart_isr_int(UART_HandleTypeDef *huart)
+{
+	huart->UARTx->IER_DLH.IER.ELSI = 1;
+	huart->UARTx->IER_DLH.IER.ERBFI = 1;
+}
+
+void uart0_init(uint32_t baudrate)
+{
+ 
+		__SYSTEM_UART0_CLK_SELECT_96M();
+		__SYSTEM_UART0_CLK_ENABLE();
+		system_set_port_pull(GPIO_PA0,GPIO_PULL_UP,true);
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_0, PORTA0_FUNC_UART0_RXD);
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_1, PORTA1_FUNC_UART0_TXD);
+		Uart0_handle.UARTx = Uart0;
+    Uart0_handle.Init.BaudRate   = baudrate;
+    Uart0_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
+    Uart0_handle.Init.StopBits   = UART_STOPBITS_1 ;
+    Uart0_handle.Init.Parity     = UART_PARITY_NONE;
+    Uart0_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
+		uart_init_ex(&Uart0_handle);
+		NVIC_SetPriority(UART0_IRQn, 5);
+		NVIC_EnableIRQ(UART0_IRQn);
+		/*enable recv and line status interrupt*/
+		uart_isr_int(&Uart0_handle);
+}
+
+void uart1_init(uint32_t baudrate)
+{	
+		__SYSTEM_UART1_CLK_ENABLE();
+		system_set_port_pull(GPIO_PA2,GPIO_PULL_UP,true);
+    /* set PA2 and PA3 for AT command interface */
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_2, PORTA2_FUNC_UART1_RXD);
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_3, PORTA3_FUNC_UART1_TXD);
+    Uart1_handle.UARTx = Uart1;
+    Uart1_handle.Init.BaudRate   = baudrate;
+    Uart1_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
+    Uart1_handle.Init.StopBits   = UART_STOPBITS_1;
+    Uart1_handle.Init.Parity     = UART_PARITY_NONE;
+    Uart1_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
+
+    uart_init_ex(&Uart1_handle);
+	
+		NVIC_EnableIRQ(UART1_IRQn);
+    NVIC_SetPriority(UART1_IRQn, 5);
+		/*enable recv and line status interrupt*/
+		uart_isr_int(&Uart1_handle);
+
+}
+
+
+__attribute__((section("ram_code"))) void uart0_isr(void)
+{
+	uint32_t isr_id;
+	uint8_t res=0;
+	volatile struct_UART_t * const uart_reg_ram = (volatile struct_UART_t *)UART0_BASE;
+	isr_id = uart_reg_ram->FCR_IID.IID;
+	if(((isr_id & 0x04) == 0x04) || ((isr_id & 0x0c) == 0x0c)) //receciver data available or character timeout indication
+	{
+		while(uart_reg_ram->LSR.LSR_BIT.DR)
+		{
+				res = (uint8_t)uart_reg_ram->DATA_DLL.DATA;
+				uart_putc_noint_no_wait(UART0,res );
+			  app_at_recv_c(res);
+		}
+	}
+	else if((isr_id & 0x06) == 0x06)//receiver line status interrupt
+	{
+		uint32_t tmp = uart_reg_ram->LSR.LSR_DWORD;
+		uart_reg_ram->FCR_IID.FCR = isr_id;
+		uart_reg_ram->IER_DLH.IER.ELSI = 0;
+	}
+}
+
+
+
+__attribute__((section("ram_code"))) void uart1_isr(void)
+{
+	uint32_t isr_id;
+	volatile struct_UART_t * const uart_reg_ram = (volatile struct_UART_t *)UART1_BASE;
+	isr_id = uart_reg_ram->FCR_IID.IID;
+	if(((isr_id & 0x04) == 0x04) || ((isr_id & 0x0c) == 0x0c)) //receciver data available or character timeout indication
+	{
+		while(uart_reg_ram->LSR.LSR_BIT.DR)
+		{
+			
+   		uart_putc_noint_no_wait(UART1, (uint8_t)uart_reg_ram->DATA_DLL.DATA);
+		 
+ 
+		}
+	}
+	else if((isr_id & 0x06) == 0x06)//receiver line status interrupt
+	{
+		uint32_t tmp = uart_reg_ram->LSR.LSR_DWORD;
+		uart_reg_ram->FCR_IID.FCR = isr_id;
+		uart_reg_ram->IER_DLH.IER.ELSI = 0;
+	}
+}
 
 /*-------------------------------------------------------------------------
     Function    :  ascii_char2val             ----add by chsheng, chsheng@accelsemi.com
@@ -186,8 +287,8 @@ void app_at_cmd_recv_handler(uint8_t *data, uint16_t length)
     }
 }
 
-#define __RAM_CODE          __attribute__((section("ram_code")))
-__RAM_CODE static void app_at_recv_c(uint8_t c)
+  
+__attribute__((section("ram_code"))) static void app_at_recv_c(uint8_t c)
 {
     switch(at_recv_state)
     {
@@ -227,6 +328,7 @@ __RAM_CODE static void app_at_recv_c(uint8_t c)
     }
 }
 
+#if 0
 __attribute__((section("ram_code"))) void app_at_uart_recv(void*dummy, uint8_t status)
 {
     app_at_recv_c(app_at_recv_char);
@@ -245,3 +347,4 @@ __attribute__((section("ram_code"))) void app_at_init(void)
     
     uart0_read_for_hci(&app_at_recv_char, 1, app_at_uart_recv, NULL);
 }
+#endif

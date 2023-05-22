@@ -632,6 +632,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\driver\components\display\driver_st77903.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\driver_uart_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
