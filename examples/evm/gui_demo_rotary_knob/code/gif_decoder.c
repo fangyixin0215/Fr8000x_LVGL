@@ -641,8 +641,9 @@ ATTRIBUTE_GIF_MEM uint8_t gif_decode(uint32_t Gif_addr,uint16_t x,uint16_t y,uin
 	mygif89a->lzw=(LZW_INFO*)gif_malloc(sizeof(LZW_INFO));
 	//	 printf(" %s size =%d----------------------\r\n",__FUNCTION__,os_get_free_heap_size());
 	if(mygif89a->lzw==NULL){
+		GIF_LOGO("os_zalloc1 fail#2\r\n");
 		return false;//申请内存失败 
-        GIF_LOGO("os_zalloc1 fail#2\r\n");
+     
     }
 	if(gif_check_head(gfile)){
 		res=PIC_FORMAT_ERR;

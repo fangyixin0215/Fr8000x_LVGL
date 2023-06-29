@@ -85,9 +85,9 @@ __attribute__((section("ram_code"))) void uart0_isr(void)
 	if(((isr_id & 0x04) == 0x04) || ((isr_id & 0x0c) == 0x0c)) //receciver data available or character timeout indication
 	{
 		while(uart_reg_ram->LSR.LSR_BIT.DR)
-		{
-				res = (uint8_t)uart_reg_ram->DATA_DLL.DATA;
-				uart_putc_noint_no_wait(UART0,res );
+		{				
+			  res = (uint8_t)uart_reg_ram->DATA_DLL.DATA;
+				//uart_putc_noint_no_wait(UART0,res );
 			  app_at_recv_c(res);
 		}
 	}

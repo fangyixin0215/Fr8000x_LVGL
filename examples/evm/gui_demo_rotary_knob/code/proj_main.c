@@ -20,22 +20,30 @@
 #include "user_task.h"
 #include "app_at.h"
 
+#include "gap_api.h"
+#include "gatt_api.h"
+#include "ble_stack.h"
+#include "app_config.h"
+
+#include "jump_table.h"
+#include "co_log.h"
+
 #include "plf.h"
 #include "driver_system.h"
-#include "driver_psram.h"
 #include "driver_pmu.h"
+#include "driver_uart.h"
+#include "driver_psram.h"
 
 #include "ble_simple_peripheral.h"
 #include "simple_gatt_service.h"
 #include "co_log.h"
 #include "dma_refresh_lvgl.h"
-#include "driver_ktm57xx.h"
 
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
 const char *app_tag = "project";
 
-#define SYSTEM_STACK_SIZE           0x1000
+#define SYSTEM_STACK_SIZE           0x800
 
 extern void gui_main(void);
 
@@ -57,41 +65,6 @@ const struct jump_table_image_t _jump_table_image __attribute__((section("jump_t
     .image_size = 0x80000,      
 };
 
-/*********************************************************************
- * @fn      user_custom_parameters
- *
- * @brief   initialize several parameters, this function will be called 
- *          at the beginning of the program. 
- *
- * @param   None. 
- *       
- *
- * @return  None.
- */ 
-void user_custom_parameters(void)
-{
-    __jump_table.addr.addr[0] = 0xBD;
-    __jump_table.addr.addr[1] = 0xAD;
-    __jump_table.addr.addr[2] = 0x10;
-    __jump_table.addr.addr[3] = 0x11;
-    __jump_table.addr.addr[4] = 0x20;
-    __jump_table.addr.addr[5] = 0x20;
-    __jump_table.system_clk = SYSTEM_SYS_CLK_96M;
-    
-    __jump_table.diag_port = 0x00008300;
-    
-    __jump_table.system_option &= (~SYSTEM_OPTION_SLEEP_ENABLE);
-
-    //system_set_internal_flash_clock_div(0);
-    //system_enable_internal_flash_q_read();
-}
-
-void user_init_static_memory(void)
-{
-    //initial_static_memory(22, 1, 20, 6, 27, 6, 27, 254, 0x800); //for multi connection
-    //initial_static_memory(6, 2, 4, 8, 100, 8, 100, 31, 0x1100E000);
-}
-
 
 
 /*********************************************************************
@@ -109,6 +82,12 @@ void user_init_static_memory(void)
  */
 __attribute__((section("ram_code"))) void user_entry_before_sleep_imp(void)
 {
+    uart_putc_noint_no_wait(UART0, 's');
+    co_delay_100us(1);
+
+    pmu_set_pin_to_PMU(GPIO_PORT_A, (1<<GPIO_BIT_0));
+    pmu_set_pin_dir(GPIO_PORT_A, (1<<GPIO_BIT_0), GPIO_DIR_IN);
+    pmu_set_pin_pull(GPIO_PORT_A, (1<<GPIO_BIT_0),GPIO_PULL_NONE);
 }
 
 /*********************************************************************
@@ -126,10 +105,18 @@ __attribute__((section("ram_code"))) void user_entry_before_sleep_imp(void)
  */
 __attribute__((section("ram_code"))) void user_entry_after_sleep_imp(void)
 {
+    pmu_set_pin_to_CPU(GPIO_PORT_A, (1<<GPIO_BIT_0));
+    
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_0, PORTA0_FUNC_UART0_RXD);
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_1, PORTA1_FUNC_UART0_TXD);
+    uart_init(UART0, 1152);
+    fr_uart_enableIrq(UART0, Uart_irq_erbfi);
 
+    uart_putc_noint_no_wait(UART0, 'w');
+    co_delay_100us(1);
+
+    NVIC_EnableIRQ(PMU_IRQn);
 }
-
-
 
 __attribute__((section("ram_code"))) void main_loop(void)
 {
@@ -175,6 +162,7 @@ __attribute__((section("ram_code"))) void main_loop(void)
  */
 void proj_init(void)
 {
+	
     LOG_INFO(app_tag, "GUI Demo\r\n");
 
     __SYSTEM_GPIO_CLK_ENABLE();

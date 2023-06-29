@@ -153,6 +153,7 @@ __attribute__((section("ram_code"))) void ec11_exti_handle(void)
 						{
 							  g_key_code = LEFT_CODE;
 						}
+						exti_interrupt_disable(EC11_EXTI_LINE);
 						g_key_lock_flag=1;
 			 }
 //			if((system_get_curr_time()-last_trigger_time) >180)
