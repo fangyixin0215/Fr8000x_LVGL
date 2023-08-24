@@ -75,13 +75,13 @@ static const lcd_reg_param_t lcd_reg_table[] = {
  
 static void st77903_write_param_cmd(uint32_t cmd, uint32_t len, uint8_t *buff)
 {
-	  uint8_t spi_data[45];
-	  spi_data[0]=0xDE;
-    spi_data[1]=0x00;
-	  spi_data[3]=0x00;
+	uint8_t spi_data[45];
+	spi_data[0]=0xDE;
+	spi_data[1]=0x00;
+	spi_data[3]=0x00;
     if (len == 0)              
     {           
-			  spi_data[2]=cmd;
+			  	spi_data[2]=cmd;
 				ST77903_CS_Select();
 				spi_master_transmit_X1(&ST77903_SPI_Handle, (uint16_t *)spi_data, 4);
 				ST77903_CS_Release();
@@ -89,7 +89,7 @@ static void st77903_write_param_cmd(uint32_t cmd, uint32_t len, uint8_t *buff)
     else if (len <= INIT_CMD_LEN)
     {    
 				 spi_data[2]=cmd;
-			   memcpy(&spi_data[4],buff,len);
+			   	 memcpy(&spi_data[4],buff,len);
 				 ST77903_CS_Select();
 				 spi_master_transmit_X1(&ST77903_SPI_Handle, (uint16_t *)spi_data, (len+4));
 				 ST77903_CS_Release();
@@ -103,7 +103,7 @@ static void st77903_write_param_cmd(uint32_t cmd, uint32_t len, uint8_t *buff)
 				ST77903_SPI_Handle.MultWireParam.Instruct       = 0xDE;
 				ST77903_SPI_Handle.MultWireParam.AddressLength  = ADDR_24BIT;
 				ST77903_SPI_Handle.MultWireParam.Address        = cmd<<8;
-		  	ST77903_CS_Select();
+		  		ST77903_CS_Select();
 				spi_master_transmit_X2X4(&ST77903_SPI_Handle, (uint16_t *)buff, len);
 				ST77903_CS_Release();
     }
@@ -137,52 +137,52 @@ static void st77903_reg_init(void) //lcd reg init
 
 void st77903_init_io(void)
 {
-     GPIO_InitTypeDef GPIO_Handle;
-	
-		__SYSTEM_GPIO_CLK_ENABLE();
-  
-		//reset cs backlight
-	  GPIO_Handle.Pin       = ST77903_RST_GPIO;
-	  GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_0;
-    gpio_init(ST77903_RST_PORT, &GPIO_Handle);
-		memset((uint8_t *)&GPIO_Handle,0,sizeof(GPIO_InitTypeDef));
-		
-		GPIO_Handle.Pin       = ST77903_CS_GPIO;
-	  GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_0;
-    gpio_init(ST77903_CS_PORT, &GPIO_Handle);
-		memset((uint8_t *)&GPIO_Handle,0,sizeof(GPIO_InitTypeDef));
-	
-	 	GPIO_Handle.Pin       = ST77903_BACKLIGHT_GPIO;
-	  GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_0;
-    gpio_init(ST77903_BACKLIGHT_PORT, &GPIO_Handle);
-		memset((uint8_t *)&GPIO_Handle,0,sizeof(GPIO_InitTypeDef));
-		
-		#ifdef ST77903_TE_EN
-		GPIO_Handle.Pin       = ST77903_TE_GPIO;
-	  GPIO_Handle.Mode      = GPIO_MODE_INPUT;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_0;
-    gpio_init(ST77903_TE_PORT, &GPIO_Handle);
-		#endif
-		
-		//sclk io0 io1 io2 io3
-	  GPIO_Handle.Pin       = ST77903_QIO0_GPIO|ST77903_QIO1_GPIO|ST77903_QIO2_GPIO|ST77903_QIO3_GPIO|ST77903_SCLK_GPIO;
-	  GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_2;
-    gpio_init(ST77903_SCLK_PORT, &GPIO_Handle);
-		
+	GPIO_InitTypeDef GPIO_Handle;
+
+	__SYSTEM_GPIO_CLK_ENABLE();
+
+	//reset cs backlight
+	GPIO_Handle.Pin       = ST77903_RST_GPIO;
+	GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
+	GPIO_Handle.Pull      = GPIO_PULLUP;
+	GPIO_Handle.Alternate = GPIO_FUNCTION_0;
+	gpio_init(ST77903_RST_PORT, &GPIO_Handle);
+	memset((uint8_t *)&GPIO_Handle,0,sizeof(GPIO_InitTypeDef));
+
+	GPIO_Handle.Pin       = ST77903_CS_GPIO;
+	GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
+	GPIO_Handle.Pull      = GPIO_PULLUP;
+	GPIO_Handle.Alternate = GPIO_FUNCTION_0;
+	gpio_init(ST77903_CS_PORT, &GPIO_Handle);
+	memset((uint8_t *)&GPIO_Handle,0,sizeof(GPIO_InitTypeDef));
+
+	GPIO_Handle.Pin       = ST77903_BACKLIGHT_GPIO;
+	GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
+	GPIO_Handle.Pull      = GPIO_PULLUP;
+	GPIO_Handle.Alternate = GPIO_FUNCTION_0;
+	gpio_init(ST77903_BACKLIGHT_PORT, &GPIO_Handle);
+	memset((uint8_t *)&GPIO_Handle,0,sizeof(GPIO_InitTypeDef));
+
+	#ifdef ST77903_TE_EN
+	GPIO_Handle.Pin       = ST77903_TE_GPIO;
+	GPIO_Handle.Mode      = GPIO_MODE_INPUT;
+	GPIO_Handle.Pull      = GPIO_PULLUP;
+	GPIO_Handle.Alternate = GPIO_FUNCTION_0;
+	gpio_init(ST77903_TE_PORT, &GPIO_Handle);
+	#endif
+
+	//sclk io0 io1 io2 io3
+	GPIO_Handle.Pin       = ST77903_QIO0_GPIO|ST77903_QIO1_GPIO|ST77903_QIO2_GPIO|ST77903_QIO3_GPIO|ST77903_SCLK_GPIO;
+	GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
+	GPIO_Handle.Pull      = GPIO_PULLUP;
+	GPIO_Handle.Alternate = GPIO_FUNCTION_2;
+	gpio_init(ST77903_SCLK_PORT, &GPIO_Handle);
 
 
-		ST77903_CS_Release();
-    ST77903_BLK_Release();
-    
+
+	ST77903_CS_Release();
+	ST77903_BLK_Release();
+
 }
 
 
@@ -202,7 +202,7 @@ static void st77903_init_spi(void)
     __SPI_DMA_TX_ENABLE(ST77903_SPI_SEL);
     __SPI_DMA_TX_LEVEL(ST77903_SPI_SEL, 15);
 	 #else
-	  __SYSTEM_SPI0_MASTER_CLK_SELECT_96M();
+	__SYSTEM_SPI0_MASTER_CLK_SELECT_96M();
     __SYSTEM_SPI0_MASTER_CLK_ENABLE();
     ST77903_SPI_Handle.SPIx                       = ST77903_SPI_SEL;
     ST77903_SPI_Handle.Init.Work_Mode             = SPI_WORK_MODE_0;
@@ -226,7 +226,7 @@ static void st77903_init_dma(void)
 	  #else
     __DMA_REQ_ID_SPI0_MASTER_TX(1);
     #endif
-    ST77903_DMA_Handle.Channel = DMA_Channel2;
+    ST77903_DMA_Handle.Channel = DMA_Channel0;
     ST77903_DMA_Handle.Init.Data_Flow        = DMA_M2P_DMAC;
     ST77903_DMA_Handle.Init.Request_ID       = 1;
     ST77903_DMA_Handle.Init.Source_Inc       = DMA_ADDR_INC_INC;
@@ -246,9 +246,9 @@ static void  st77903_write_sync_cmd(uint8_t cmd)
     spi_data[1]=0x00;
     spi_data[2]=cmd;
     spi_data[3]=0x00;
-		ST77903_CS_Select();
-    spi_master_transmit_X1(&ST77903_SPI_Handle, (uint16_t *)spi_data, 4);
-		ST77903_CS_Release();
+	ST77903_CS_Select();
+	spi_master_transmit_X1(&ST77903_SPI_Handle, (uint16_t *)spi_data, 4);
+	ST77903_CS_Release();
 
 }
 
@@ -299,27 +299,6 @@ GLOBAL_INT_DISABLE();
 	GLOBAL_INT_RESTORE();
 }
 
-__attribute__((section("ram_code"))) void st77903_read_te_handler(void)
-{
-		 #ifdef ST77903_TE_EN
-	   static uint8_t te_signal_cnt=0;
-		 if(get_lcd_te_state()==true)
-		 {
-				if(++te_signal_cnt>=2)//te提前到达 屏幕出现异常情况
-				{
-						te_signal_cnt = 0;
-						printf("te signal err\r\n");
-					  //执行屏幕初始化指令 
-						st77903_reg_init();
-						st77903_display(ST77903_RAM_ADDR,0);
-					  return ;
-				}
-		 }else{
-				te_signal_cnt=0;
-		 }		
-		
-		#endif
-}
 __attribute__((section("ram_code"))) void st77903_display(uint16_t *data,uint8_t step)
 {
 	GLOBAL_INT_DISABLE();
@@ -333,7 +312,7 @@ __attribute__((section("ram_code"))) void st77903_display(uint16_t *data,uint8_t
 		 co_delay_10us(5);//
 		 for(uint8_t i=0;i<6;i++)
 		 {
-				st77903_write_sync_cmd(0x60);
+			  st77903_write_sync_cmd(0x60);
 			  co_delay_10us(5);//
 		 }
 		  ST77903_CS_Select();
@@ -355,7 +334,7 @@ __attribute__((section("ram_code"))) void st77903_display(uint16_t *data,uint8_t
 			ST77903_SPI_Handle.MultWireParam.AddressLength  = ADDR_24BIT;
 			ST77903_SPI_Handle.MultWireParam.Address        = 0x006000;
 			spi_master_transmit_X2X4_DMA(&ST77903_SPI_Handle);
-		  dma_start_IT(&ST77903_DMA_Handle, (uint32_t)&data[display_count*ST77903_REFRESH_LINE], (uint32_t)&ST77903_SPI_Handle.SPIx->DR, ST77903_REFRESH_LINE/2, DMA_BURST_LEN_16);
+		    dma_start_IT(&ST77903_DMA_Handle, (uint32_t)&data[display_count*ST77903_REFRESH_LINE], (uint32_t)&ST77903_SPI_Handle.SPIx->DR, ST77903_REFRESH_LINE/2, DMA_BURST_LEN_16);
 		 break;
 		 case 2:
 		 {			 
@@ -405,39 +384,29 @@ uint8_t get_st77903_send_state(void)
 __attribute__((section("ram_code"))) void st77903_dma_isr(void)
 { 
 
-    /* Clear Transfer complete status */
-    dma_clear_tfr_Status(ST77903_DMA_Handle.Channel);//
-    /* channel Transfer complete interrupt disable */
-    dma_tfr_interrupt_disable(ST77903_DMA_Handle.Channel);
-		while(__SPI_IS_BUSY(ST77903_SPI_Handle.SPIx) == 1); //1-2us
-		ST77903_CS_Release();	
-		__SPI_DISABLE(ST77903_SPI_Handle.SPIx);
-		#if(ST77903_320X320==1)//320的屏幕速率要调低一点
-  	ST77903_SPI_Handle.SPIx->BAUDR = 10;
-		#endif
-		__SPI_DATA_FRAME_SIZE(ST77903_SPI_Handle.SPIx,SPI_FRAME_SIZE_8BIT);		
-		__SPI_ENABLE(ST77903_SPI_Handle.SPIx);
-	  display_count++;
-	  if(display_count>=ST77903_REFRESH_LINE)
-		{
-				g_transfer_step=2;
-			  st77903_display(ST77903_RAM_ADDR,2);
-		}
-		else
-		{
-				st77903_display(ST77903_RAM_ADDR,1);
-		}
+	/* Clear Transfer complete status */
+	dma_clear_tfr_Status(ST77903_DMA_Handle.Channel);//
+	/* channel Transfer complete interrupt disable */
+	dma_tfr_interrupt_disable(ST77903_DMA_Handle.Channel);
+	while(__SPI_IS_BUSY(ST77903_SPI_Handle.SPIx) == 1); //1-2us
+	ST77903_CS_Release();	
+	__SPI_DISABLE(ST77903_SPI_Handle.SPIx);
+	#if(ST77903_320X320==1)//320的屏幕速率要调低一点
+	ST77903_SPI_Handle.SPIx->BAUDR = 10;
+	#endif
+	__SPI_DATA_FRAME_SIZE(ST77903_SPI_Handle.SPIx,SPI_FRAME_SIZE_8BIT);		
+	__SPI_ENABLE(ST77903_SPI_Handle.SPIx);
+	display_count++;
+	if(display_count>=ST77903_REFRESH_LINE)
+	{
+			g_transfer_step=2;
+			st77903_display(ST77903_RAM_ADDR,2);
+	}
+	else
+	{
+			st77903_display(ST77903_RAM_ADDR,1);
+	}
 }
-//__attribute__((section("ram_code"))) void dma_isr(void)
-//{
-//#ifdef DISPLAY_TYPE_GC9C01
-//    gc9c01_dma_isr();
-//#endif
-//#ifdef DISPLAY_TYPE_JD9854
-//    jd9854_dma_isr();
-//#endif
-//		st77903_dma_isr();
-//}
 
 void st77903_init(void)
 {
