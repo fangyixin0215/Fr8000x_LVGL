@@ -593,11 +593,6 @@
               <FilePath>..\..\..\..\components\driver\driver_spi_master.c</FilePath>
             </File>
             <File>
-              <FileName>driver_gc9c01.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\driver\components\display\driver_gc9c01.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\driver\driver_i2c.c</FilePath>
@@ -608,29 +603,9 @@
               <FilePath>..\..\..\..\components\driver\driver_if8080.c</FilePath>
             </File>
             <File>
-              <FileName>driver_jd9854.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\driver\components\display\driver_jd9854.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_display.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\driver\components\display\driver_display.c</FilePath>
-            </File>
-            <File>
-              <FileName>dma_refresh_lvgl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\code\dma_refresh_lvgl.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_cst816d.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\driver\components\touchpad\driver_cst816d.c</FilePath>
-            </File>
-            <File>
-              <FileName>driver_st77903.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\driver\components\display\driver_st77903.c</FilePath>
             </File>
             <File>
               <FileName>driver_uart_ex.c</FileName>
@@ -1321,6 +1296,51 @@
               <FileName>picture_define.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\code\picture\picture_define.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>display</GroupName>
+          <Files>
+            <File>
+              <FileName>driver_display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_display.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_gc9c01.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_gc9c01.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_jd9854.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_jd9854.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_nv3041a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_nv3041a.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_st7789v.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_st7789v.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_st77903.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_st77903.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_st7796s.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_st7796s.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_gc9a01.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_gc9a01.c</FilePath>
             </File>
           </Files>
         </Group>

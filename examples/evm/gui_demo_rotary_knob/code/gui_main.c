@@ -105,17 +105,7 @@ __attribute__((section("ram_code"))) void timer0_isr(void)
 		lv_tick_inc(LV_TICK_COUNT);
 }
 
-__attribute__((section("ram_code"))) void timer1_isr(void)
-{
-    uint32_t tick;
-    timer_int_clear(Timer1);
-    timer_stop(Timer1);
-	  
-
-    tick = lv_timer_handler();
-    timer_init(Timer1, system_get_clock_config()*1000*tick, TIMER_DIV_NONE);
-    timer_start(Timer1);
-}
+ 
 
 static void lv_schedule_timer_handler(void *arg)
 {
@@ -195,62 +185,59 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 
 void gui_main(void)
 {
-		#if(TOUCHPAD_ENABLED==1)
-		cst816_init();
-		#endif
-		printf("gui_main\r\n");
-    lv_init();
-		/*Initialize `disp_buf` with the buffer(s) */
-		#if 1 
-   lv_disp_draw_buf_init(&disp_buf, (void *)0x22000000, (void *)/*0x22050000*/(0x22000000+LV_HOR_RES_MAX * LV_VER_RES_MAX*2), LV_HOR_RES_MAX * LV_VER_RES_MAX);    /*Initialize the display buffer*/
-   //lv_disp_draw_buf_init(&disp_buf, (void *)0x22000000, NULL, LV_HOR_RES_MAX * LV_VER_RES_MAX);    /*Initialize the display buffer*/
-	 #else
-			static lv_color_t buf_1[LV_HOR_RES_MAX * 20];
-			static lv_color_t buf_2[LV_HOR_RES_MAX * 20];
-			lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, LV_HOR_RES_MAX * 20);    /*Initialize the display buffer*/
-		#endif
-    /* Implement and register a function which can copy the rendered image to an area of your display */
-    static lv_disp_drv_t disp_drv;               /*Descriptor of a display driver*/
-    lv_disp_drv_init(&disp_drv);          /*Basic initialization*/
-    disp_drv.flush_cb = my_disp_flush;    /*Set your driver function*/
-    disp_drv.draw_buf = &disp_buf;        /*Assign the buffer to the display*/
-    disp_drv.hor_res = LV_HOR_RES_MAX;
-    disp_drv.ver_res = LV_VER_RES_MAX;
-    disp_drv.full_refresh = 1;
-    lv_disp_drv_register(&disp_drv);      /*Finally register the driver*/
-		#if(TOUCHPAD_ENABLED==1)
-    /* Implement and register a function which can read an input device. E.g. for a touch pad */
-    static lv_indev_drv_t indev_drv;                  /*Descriptor of a input device driver*/
-    lv_indev_drv_init(&indev_drv);             /*Basic initialization*/
-    indev_drv.type = LV_INDEV_TYPE_POINTER;    /*Touch pad is a pointer-like device*/
-    indev_drv.read_cb = my_touchpad_read;      /*Set your driver function*/
-    lv_indev_drv_register(&indev_drv);         /*Finally register the driver*/
-		#endif
-    input_encoder_init();
-		static lv_indev_drv_t indev_drv1;
-    /*Initialize your keypad or keyboard if you have*/
-    /*Register a keypad input device*/
-    lv_indev_drv_init(&indev_drv1);
-    indev_drv1.type = LV_INDEV_TYPE_KEYPAD;
-    indev_drv1.read_cb = keypad_read;
-    g_indev_keypad = lv_indev_drv_register(&indev_drv1);
-	  knob_gui_init();
+	#if(TOUCHPAD_ENABLED==1)
+	cst816_init();
+	#endif
+	printf("gui_main\r\n");
+	lv_init();
+	/*Initialize `disp_buf` with the buffer(s) */
+	#if 1 
+	lv_disp_draw_buf_init(&disp_buf, (void *)0x22000000, (void *)/*0x22050000*/(0x22000000+LV_HOR_RES_MAX * LV_VER_RES_MAX*2), LV_HOR_RES_MAX * LV_VER_RES_MAX);    /*Initialize the display buffer*/
+	//lv_disp_draw_buf_init(&disp_buf, (void *)0x22000000, NULL, LV_HOR_RES_MAX * LV_VER_RES_MAX);    /*Initialize the display buffer*/
+	#else
+	static lv_color_t buf_1[LV_HOR_RES_MAX * 20];
+	static lv_color_t buf_2[LV_HOR_RES_MAX * 20];
+	lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, LV_HOR_RES_MAX * 20);    /*Initialize the display buffer*/
+	#endif
+	/* Implement and register a function which can copy the rendered image to an area of your display */
+	static lv_disp_drv_t disp_drv;               /*Descriptor of a display driver*/
+	lv_disp_drv_init(&disp_drv);          /*Basic initialization*/
+	disp_drv.flush_cb = my_disp_flush;    /*Set your driver function*/
+	disp_drv.draw_buf = &disp_buf;        /*Assign the buffer to the display*/
+	disp_drv.hor_res = LV_HOR_RES_MAX;
+	disp_drv.ver_res = LV_VER_RES_MAX;
+	disp_drv.full_refresh = 1;
+	lv_disp_drv_register(&disp_drv);      /*Finally register the driver*/
+	#if(TOUCHPAD_ENABLED==1)
+	/* Implement and register a function which can read an input device. E.g. for a touch pad */
+	static lv_indev_drv_t indev_drv;                  /*Descriptor of a input device driver*/
+	lv_indev_drv_init(&indev_drv);             /*Basic initialization*/
+	indev_drv.type = LV_INDEV_TYPE_POINTER;    /*Touch pad is a pointer-like device*/
+	indev_drv.read_cb = my_touchpad_read;      /*Set your driver function*/
+	lv_indev_drv_register(&indev_drv);         /*Finally register the driver*/
+	#endif
+	input_encoder_init();
+	static lv_indev_drv_t indev_drv1;
+	/*Initialize your keypad or keyboard if you have*/
+	/*Register a keypad input device*/
+	lv_indev_drv_init(&indev_drv1);
+	indev_drv1.type = LV_INDEV_TYPE_KEYPAD;
+	indev_drv1.read_cb = keypad_read;
+	g_indev_keypad = lv_indev_drv_register(&indev_drv1);
+	knob_gui_init();
+
+	display_init();
+	__SYSTEM_TIMER_CLK_ENABLE();
+	timer_init(Timer0, system_get_clock_config()*1000*LV_TICK_COUNT, TIMER_DIV_NONE);
+	timer_start(Timer0);
+	NVIC_SetPriority(TIMER0_IRQn, 5);
+	NVIC_EnableIRQ(TIMER0_IRQn);
+	g_gif_show_flag=1;
+	start_gif_decoder_init();
+	os_timer_init(&lv_schedule_timer, lv_schedule_timer_handler, NULL);
+	os_timer_start(&lv_schedule_timer, 10, true);
 		
-		display_init();
-	  __SYSTEM_TIMER_CLK_ENABLE();
-    timer_init(Timer0, system_get_clock_config()*1000*LV_TICK_COUNT, TIMER_DIV_NONE);
-    timer_start(Timer0);
-    NVIC_SetPriority(TIMER0_IRQn, 5);
-    NVIC_EnableIRQ(TIMER0_IRQn);
-	  g_gif_show_flag=1;
-		start_gif_decoder_init();
-    os_timer_init(&lv_schedule_timer, lv_schedule_timer_handler, NULL);
-    os_timer_start(&lv_schedule_timer, 10, true);
-		
-//    timer_init(Timer1, system_get_clock_config()*1000*20, TIMER_DIV_NONE);
-//    timer_start(Timer1);
-//    NVIC_SetPriority(TIMER1_IRQn, 6);
-//    NVIC_EnableIRQ(TIMER1_IRQn);
+ 
 
     //lv_demo_widgets();
     //lv_demo_benchmark();

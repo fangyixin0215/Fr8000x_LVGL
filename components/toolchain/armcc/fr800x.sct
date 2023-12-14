@@ -16,10 +16,10 @@ ROM 0x10000000  0x80000
         *(+RO)
     }
     
-    GUI_MENU_DATA +0 ALIGN 0x4
-    {
-        *(gui_menu)
-    }
+;    GUI_MENU_DATA +0 ALIGN 0x4
+;    {
+;        *(gui_menu)
+;    }
     
     ER_BOOT 0x11000000
     {

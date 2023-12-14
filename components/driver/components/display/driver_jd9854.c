@@ -819,7 +819,7 @@ __attribute__((section("ram_code"))) void jd9854_dma_isr(void)
     
     // CS Release
     if8080_cs_release();
-
+	if8080_wait_bus_idle();
     /* Clear Transfer complete status */
     dma_clear_tfr_Status(jd9854_DMA_Channel.Channel);
     /* channel Transfer complete interrupt disable */

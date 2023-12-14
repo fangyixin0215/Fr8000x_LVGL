@@ -189,7 +189,8 @@ void proj_init(void)
     simple_peripheral_init();
 		
     printf(" %s size =%d\r\n",__FUNCTION__,os_get_free_heap_size());
-		
+	
+	 	
     gui_main();
 		
 		
@@ -209,6 +210,7 @@ void proj_init(void)
  *
  * @return  None.
  */
+ 
 void user_main(void)
 {
 		mac_addr_t mac_addr;

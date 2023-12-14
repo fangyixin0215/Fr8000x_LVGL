@@ -19,8 +19,10 @@
 #include "driver_gc9c01.h"
 #include "driver_jd9854.h"
 #include "driver_st77903.h"
-
-
+#include "driver_gc9a01.h"
+#include "driver_nv3041a.h"
+#include "driver_st7789v.h"
+#include "driver_st7796s.h"
 
 void display_init(void)
 {
@@ -30,6 +32,19 @@ void display_init(void)
 #ifdef DISPLAY_TYPE_JD9854
     jd9854_init();
 #endif
+#ifdef DISPLAY_TYPE_GC9A01
+    gc9a01_init();
+#endif
+#ifdef DISPLAY_TYPE_NV3041A
+    nv3041a_init();
+#endif	
+#ifdef DISPLAY_TYPE_ST7789V
+    st7789v_init();
+#endif	
+
+#ifdef DISPLAY_TYPE_ST7796S
+    st7796s_init();
+#endif	
 	
 #ifdef DISPLAY_TYPE_ST77903
     st77903_init();
@@ -46,6 +61,19 @@ void display_set_window(uint16_t x_s, uint16_t x_e, uint16_t y_s, uint16_t y_e)
 #endif
 #ifdef DISPLAY_TYPE_ST77903
 #endif
+#ifdef DISPLAY_TYPE_GC9A01
+    gc9a01_set_window(x_s, x_e, y_s, y_e);
+#endif
+#ifdef DISPLAY_TYPE_NV3041A
+    nv3041a_set_window(x_s, x_e, y_s, y_e);
+#endif	
+#ifdef DISPLAY_TYPE_ST7789V
+    st7789v_set_window(x_s, x_e, y_s, y_e);
+#endif	
+
+#ifdef DISPLAY_TYPE_ST7796S
+    st7796s_set_window(x_s, x_e, y_s, y_e);
+#endif	
 }
 
 void display_wait_transfer_done(void)
@@ -59,6 +87,20 @@ void display_wait_transfer_done(void)
 #ifdef DISPLAY_TYPE_ST77903
      
 #endif
+
+#ifdef DISPLAY_TYPE_GC9A01
+    gc9a01_display_wait_transfer_done();
+#endif
+#ifdef DISPLAY_TYPE_NV3041A
+    nv3041a_display_wait_transfer_done();
+#endif	
+#ifdef DISPLAY_TYPE_ST7789V
+    st7789v_display_wait_transfer_done();
+#endif	
+
+#ifdef DISPLAY_TYPE_ST7796S
+    st7796s_display_wait_transfer_done();
+#endif	
 }
 
 void display_update(uint32_t pixel_count, uint16_t *data, void(*callback)(void))
@@ -69,6 +111,19 @@ void display_update(uint32_t pixel_count, uint16_t *data, void(*callback)(void))
 #ifdef DISPLAY_TYPE_JD9854
     jd9854_display(pixel_count, data, callback);
 #endif
+#ifdef DISPLAY_TYPE_GC9A01
+    gc9a01_display(pixel_count, data, callback);
+#endif
+#ifdef DISPLAY_TYPE_NV3041A
+    nv3041a_display(pixel_count, data, callback);
+#endif	
+#ifdef DISPLAY_TYPE_ST7789V
+    st7789v_display(pixel_count, data, callback);
+#endif	
+
+#ifdef DISPLAY_TYPE_ST7796S
+    st7796s_display(pixel_count, data, callback);
+#endif	
 }
 
 void display_gather_update(uint32_t pixel_count, uint16_t *data, uint16_t interval, uint16_t count, void(*callback)(void))
@@ -93,4 +148,17 @@ __attribute__((section("ram_code"))) void dma_isr(void)
 #ifdef DISPLAY_TYPE_ST77903
      st77903_dma_isr();
 #endif
+#ifdef DISPLAY_TYPE_GC9A01
+    gc9a01_dma_isr();
+#endif
+#ifdef DISPLAY_TYPE_NV3041A
+    nv3041a_dma_isr();
+#endif	
+#ifdef DISPLAY_TYPE_ST7789V
+    st7789v_dma_isr();
+#endif	
+
+#ifdef DISPLAY_TYPE_ST7796S
+    st7796s_dma_isr();
+#endif	
 }

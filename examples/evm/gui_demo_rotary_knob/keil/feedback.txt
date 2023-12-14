@@ -1,4 +1,4 @@
-;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Mon Oct 30 15:08:15 2023
+;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Thu Dec 14 15:53:53 2023
 ;VERSION 0.2
 ;FILE adv_check_mode.o
 __asm___16_adv_check_mode_c_9741a236____REV16 <= USED 0
@@ -97,14 +97,6 @@ __asm___6_atts_c_ca3f1c07____RRX <= USED 0
 __asm___8_co_log_c_f9bf2c1a____REV16 <= USED 0
 __asm___8_co_log_c_f9bf2c1a____REVSH <= USED 0
 __asm___8_co_log_c_f9bf2c1a____RRX <= USED 0
-;FILE dma_refresh_lvgl.o
-__asm___18_dma_refresh_lvgl_c_78e1d0b3____REV16 <= USED 0
-__asm___18_dma_refresh_lvgl_c_78e1d0b3____REVSH <= USED 0
-__asm___18_dma_refresh_lvgl_c_78e1d0b3____RRX <= USED 0
-lv_gpu_stm32_dma2d_blend <= USED 0
-lv_gpu_stm32_dma2d_copy <= USED 0
-lv_gpu_stm32_dma2d_fill <= USED 0
-lv_gpu_stm32_dma2d_init <= USED 0
 ;FILE driver_cst816d.o
 __asm___16_driver_cst816d_c_7fca664c____REV16 <= USED 0
 __asm___16_driver_cst816d_c_7fca664c____REVSH <= USED 0
@@ -141,6 +133,19 @@ __asm___14_driver_flash_c_48468d59____REVSH <= USED 0
 __asm___14_driver_flash_c_48468d59____RRX <= USED 0
 flash_OTP_erase <= USED 0
 flash_OTP_write <= USED 0
+;FILE driver_gc9a01.o
+ReverseByteBits <= USED 0
+__asm___15_driver_gc9a01_c_data____REV16 <= USED 0
+__asm___15_driver_gc9a01_c_data____REVSH <= USED 0
+__asm___15_driver_gc9a01_c_data____RRX <= USED 0
+gc9a01_display <= USED 0
+gc9a01_display_wait_transfer_done <= USED 0
+gc9a01_dma_isr <= USED 0
+gc9a01_init <= USED 0
+gc9a01_set_window <= USED 0
+lcd_backlight_open <= USED 0
+send_16data_disp <= USED 0
+send_data_disp <= USED 0
 ;FILE driver_gc9c01.o
 __asm___15_driver_gc9c01_c_ce784edd____REV16 <= USED 0
 __asm___15_driver_gc9c01_c_ce784edd____REVSH <= USED 0
@@ -220,6 +225,16 @@ ktm57xx_unlock_otp <= USED 0
 ktm57xx_wakeup_mode <= USED 0
 ktm57xx_write_byte <= USED 0
 ktm57xx_write_register <= USED 0
+;FILE driver_nv3041a.o
+__asm___16_driver_nv3041a_c_b2056e95____REV16 <= USED 0
+__asm___16_driver_nv3041a_c_b2056e95____REVSH <= USED 0
+__asm___16_driver_nv3041a_c_b2056e95____RRX <= USED 0
+nv3041a_display <= USED 0
+nv3041a_display_gather <= USED 0
+nv3041a_display_wait_transfer_done <= USED 0
+nv3041a_dma_isr <= USED 0
+nv3041a_init <= USED 0
+nv3041a_set_window <= USED 0
 ;FILE driver_pmu.o
 __asm___12_driver_pmu_c_e1c3740d____REV16 <= USED 0
 __asm___12_driver_pmu_c_e1c3740d____REVSH <= USED 0
@@ -307,16 +322,38 @@ spi_master_receive_X2X4_IT <= USED 0
 spi_master_transmit_X1_DMA <= USED 0
 spi_master_transmit_X1_IT <= USED 0
 spi_master_transmit_X2X4_IT <= USED 0
+;FILE driver_st7789v.o
+__asm___16_driver_st7789v_c_3b21772d____REV16 <= USED 0
+__asm___16_driver_st7789v_c_3b21772d____REVSH <= USED 0
+__asm___16_driver_st7789v_c_3b21772d____RRX <= USED 0
+st7789v_Clear <= USED 0
+st7789v_display <= USED 0
+st7789v_display_gather <= USED 0
+st7789v_display_wait_transfer_done <= USED 0
+st7789v_dma_isr <= USED 0
+st7789v_init <= USED 0
+st7789v_set_window <= USED 0
 ;FILE driver_st77903.o
 __asm___16_driver_st77903_c_0b4ba2a9____REV16 <= USED 0
 __asm___16_driver_st77903_c_0b4ba2a9____REVSH <= USED 0
 __asm___16_driver_st77903_c_0b4ba2a9____RRX <= USED 0
 display <= USED 0
+;FILE driver_st7796s.o
+__asm___16_driver_st7796s_c_423165c9____REV16 <= USED 0
+__asm___16_driver_st7796s_c_423165c9____REVSH <= USED 0
+__asm___16_driver_st7796s_c_423165c9____RRX <= USED 0
+st7796s_display <= USED 0
+st7796s_display_gather <= USED 0
+st7796s_display_wait_transfer_done <= USED 0
+st7796s_dma_isr <= USED 0
+st7796s_init <= USED 0
+st7796s_set_window <= USED 0
 ;FILE driver_timer.o
 __asm___14_driver_timer_c_651163fb____REV16 <= USED 0
 __asm___14_driver_timer_c_651163fb____REVSH <= USED 0
 __asm___14_driver_timer_c_651163fb____RRX <= USED 0
 timer_get_CurrentCount <= USED 0
+timer_stop <= USED 0
 ;FILE driver_uart_ex.o
 __asm___16_driver_uart_ex_c_83b916d4____REV16 <= USED 0
 __asm___16_driver_uart_ex_c_83b916d4____REVSH <= USED 0
@@ -335,7 +372,6 @@ __asm___7_entry_c_6c79d3f1____RRX <= USED 0
 appm_init_null <= USED 0
 ble_stack_set_sleep_dur <= USED 0
 ble_stack_sleep_time_calc <= USED 0
-get_SDK_compile_date_time <= USED 0
 rwble_hl_init_null <= USED 0
 user_entry4 <= USED 0
 user_init_static_memory <= USED 0
