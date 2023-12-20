@@ -24,6 +24,8 @@
  * MACROS (宏定义)
  */
 
+#define BLE_NAME_STR	'S','i','m','p','l','e',' ','P','e','r','i','p','h','e','r','a','l'
+#define BLE_NAME_LEN	(0x11+1) //BLE_NAME_LEN = (BLE_NAME_STR+1)
 /*
  * CONSTANTS (常量定义)
  */
@@ -47,10 +49,9 @@ static uint8_t adv_data[] =
 static uint8_t scan_rsp_data[] =
 {
   // complete name 设备名字
-  0x12,   // length of this data
+  BLE_NAME_LEN,   // length of this data
   GAP_ADVTYPE_LOCAL_NAME_COMPLETE,
-  'S','i','m','p','l','e',' ','P','e','r','i','p','h','e','r','a','l',
-
+  BLE_NAME_STR,
   // Tx power level 发射功率
   0x02,   // length of this data
   GAP_ADVTYPE_POWER_LEVEL,
@@ -222,7 +223,7 @@ static void sp_start_adv(void)
 void simple_peripheral_init(void)
 {
     // set local device name
-    uint8_t local_name[] = "Simple Peripheral";
+    uint8_t local_name[] = {BLE_NAME_STR};
     gap_dev_name_set(local_name, sizeof(local_name));
     
     // Initialize security related settings.
@@ -238,29 +239,26 @@ void simple_peripheral_init(void)
     
     gap_security_param_init(&param);   
     gap_set_cb_func(app_gap_evt_cb);
-//    gap_bond_manager_init(BLE_BONDING_INFO_SAVE_ADDR, BLE_REMOTE_SERVICE_SAVE_ADDR, 8, true);
-//    gap_bond_manager_delete_all();
-	  mac_addr_t addr;	
+//  gap_bond_manager_init(BLE_BONDING_INFO_SAVE_ADDR, BLE_REMOTE_SERVICE_SAVE_ADDR, 8, true);
+//  gap_bond_manager_delete_all();
+	mac_addr_t addr;	
 
-		addr.addr[0] = 0x55;
-    addr.addr[1] = 0x44;
-    addr.addr[2] = 0x33;
-    addr.addr[3] = 0x22;
-    addr.addr[4] = 0x11;
-    addr.addr[5] = 0x20;
+	addr.addr[0] = 0x55;
+	addr.addr[1] = 0x44;
+	addr.addr[2] = 0x33;
+	addr.addr[3] = 0x22;
+	addr.addr[4] = 0x11;
+	addr.addr[5] = 0x20;
 		
-		
-	  enum 	ble_addr_type type=BLE_ADDR_TYPE_PRIVATE;
-		
-		//gap_address_set(&addr,BLE_ADDR_TYPE_PRIVATE);
-		
-		gap_address_get(&addr,&type);
-    co_printf("Local BDADDR: 0x%2X%2X%2X%2X%2X%2X\r\n", addr.addr[0], addr.addr[1], addr.addr[2], addr.addr[3], addr.addr[4], addr.addr[5]);
-		
-    
-    // Adding services to database
-    sp_gatt_add_service();  
-		ota_gatt_add_service();
+	enum ble_addr_type type=BLE_ADDR_TYPE_PRIVATE;
+	//gap_address_set(&addr,BLE_ADDR_TYPE_PRIVATE);
+	gap_address_get(&addr,&type);
+	co_printf("Local BDADDR: 0x%2X%2X%2X%2X%2X%2X\r\n", addr.addr[0], addr.addr[1], addr.addr[2], addr.addr[3], addr.addr[4], addr.addr[5]);
+
+
+	// Adding services to database
+	sp_gatt_add_service();  
+	ota_gatt_add_service();
 }
 
 

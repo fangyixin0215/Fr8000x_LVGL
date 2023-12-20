@@ -1029,7 +1029,7 @@ void system_latency_disable(uint8_t conidx);
  * @brief   get chip 6-byte unique ID.
  */
 void system_get_unique_ID(uint8_t *ID_Buffer);
-
+ 
 void system_set_port_pull(uint32_t port_sel, enum system_port_pull_t pull, bool en);
 void system_osc_doubler_calibration(void);
 
@@ -1055,6 +1055,7 @@ void system_enable_internal_flash_q_read(uint8_t opcode);
 void system_power_off(void);
 void system_set_tx_power(enum rf_tx_power_t tx_power);
 void system_init(void);
+
 
 #endif  //_DRIVER_SYSTEM_H
 

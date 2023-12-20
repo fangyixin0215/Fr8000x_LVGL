@@ -223,7 +223,7 @@ void pmu_sub_init(void)
     system_set_tx_power(RF_TX_POWER_0dBm);
 
 #if ENABLE_SYSTEM_PROTECTION_IN_LVD == 1
-    pmu_lvd_en(0,LVD_2_3_V,NULL); 
+    pmu_lvd_en(0, LVD_2_3_V, 5); 
     NVIC_EnableIRQ(PMU_IRQn);
 #endif  // ENABLE_SYSTEM_PROTECTION_IN_LVD
 }
@@ -241,6 +241,16 @@ __attribute__((section("ram_code"))) void pmu_ioldosw_ctrl(bool on)
     }
 }
 
+__attribute__((section("ram_code"))) void pmu_ioldo_bypass(bool on)
+{  
+    if(on) {
+        ool_write(PMU_REG_IOLDO_CFG_1, ool_read(PMU_REG_IOLDO_CFG_1) | 0x20);
+    }
+    else {
+        ool_write(PMU_REG_IOLDO_CFG_1, ool_read(PMU_REG_IOLDO_CFG_1) & ~0x20);
+    }
+}
+
 __attribute__((section("ram_code"))) void pmu_usb_pad_ctrl(bool on)
 {  
     if(on) {
@@ -248,6 +258,29 @@ __attribute__((section("ram_code"))) void pmu_usb_pad_ctrl(bool on)
     }
     else {
         ool_write(PMU_REG_GPIO_MUX_CFG_SEL, 0x40);
+    }
+}
+
+
+/*********************************************************************
+ * @fn      pmu_adc_power_control
+ *
+ * @brief   Set the low voltage detection threshold
+ *
+ * @param   fb_power: true:  enable
+*                     false: disable
+ */
+void pmu_adc_power_control(bool fb_power)
+{
+    /* power on ADC module */
+    if (fb_power)
+    {
+        ool_write(PMU_REG_ADC_CFG, ool_read(PMU_REG_ADC_CFG) | 0x80);
+    }
+    /* power off */    
+    else
+    {
+        ool_write(PMU_REG_ADC_CFG, ool_read(PMU_REG_ADC_CFG) & ~0x80);
     }
 }
 
@@ -478,7 +511,6 @@ void pmu_set_pin_xor_en(enum system_port_t port, uint8_t bits, bool en)
  */
 void pmu_charging_monitor_en(enum charge_type charge)
 {
- 
     if (charge == PMU_CHARGING_IN) 
     {
         ool_pd_write(PMU_REG_PD_ANA_INT_LEVEL, 0x00);
@@ -774,6 +806,42 @@ void pmu_ft_trim_config(struct_FT_Param_t *FT_Param)
         ADC_Cal_Param.u16_slopeB = FT_Param->Param.V7.u16_slopeB;
         ADC_Cal_Param.s16_constantA = FT_Param->Param.V7.s16_constantA;
         ADC_Cal_Param.s16_constantB = FT_Param->Param.V7.s16_constantB;
+        
+        if (FT_Param->Param.V7.s16_constantA < 0)
+        {
+            if ((ADC_Cal_Param.s16_constantA % 1000) == 0)   /* N */
+                ADC_Cal_Param.s16_constantA = FT_Param->Param.V7.s16_constantA;
+            else if ((ADC_Cal_Param.s16_constantA % 1000) == -464)    /* - X2 */
+            {
+                ADC_Cal_Param.s16_constantA = -66 + (FT_Param->Param.V7.s16_constantA / 1000);
+                ADC_Cal_Param.s16_constantA *= 1000;
+            }
+            else if ((ADC_Cal_Param.s16_constantA % 1000) == -536)    /* + X1 */
+            {
+                ADC_Cal_Param.s16_constantA = 65 + (FT_Param->Param.V7.s16_constantA / 1000);
+                ADC_Cal_Param.s16_constantA *= 1000;
+            }
+        }
+        else
+        {
+            if ((ADC_Cal_Param.s16_constantA % 1000) == 0)    /* N */
+                ADC_Cal_Param.s16_constantA = FT_Param->Param.V7.s16_constantA;
+            else if ((ADC_Cal_Param.s16_constantA % 1000) == 536)    /* - X1 */
+            {
+                ADC_Cal_Param.s16_constantA = 65 - (FT_Param->Param.V7.s16_constantA / 1000);
+                ADC_Cal_Param.s16_constantA *= -1000;
+            }
+            else if ((ADC_Cal_Param.s16_constantA % 1000) == 464)    /* + X2 */
+            {
+                ADC_Cal_Param.s16_constantA = 66 + (FT_Param->Param.V7.s16_constantA / 1000);
+                ADC_Cal_Param.s16_constantA *= 1000;
+            }
+            else if ((ADC_Cal_Param.s16_constantA % 1000) == 72)     /* - X3 */
+            {
+                ADC_Cal_Param.s16_constantA = 131 - (FT_Param->Param.V7.s16_constantA / 1000);
+                ADC_Cal_Param.s16_constantA *= -1000;
+            }
+        }
     }
 }
 
@@ -808,7 +876,48 @@ void pmu_low_speed_xtal_config(enum pmu_clock_sel_t pmu_clock_sel)
     }
 }
 
+/*********************************************************************
+ * @fn      pmu_Anti_shake_key_config
+ *
+ * @brief   Anti shake key config. 
+ *          In low-power mode, it supports a pair Anti shake key detection.
+ *          1. Only Detection level change.
+ *          2. Bipolar detection.
+ *          3. One of the pair of pins must remain unchanged.
+ *
+ * @param   Key_A: Anti shake key A Select port.
+ * @param   Key_B: Anti shake key B Select port.
+ * @param   fu8_filter: filter value. 1:1ms ~ 255:255ms
+ */
+void pmu_Anti_shake_key_config(enum filter_Key_A Key_A, enum filter_Key_B Key_B, uint8_t fu8_filter)
+{
+    /* Anti shake key clock enable */
+    ool_write(PMU_REG_CLK_EN, ool_read(PMU_REG_CLK_EN) | (PMU_DEB_CLK_EN | PMU_QDEC_CLK_EN | PMU_DEB_DIV_EN));
+    /* Stop reset */
+    ool_write(PMU_REG_RST_CTRL, ool_read(PMU_REG_RST_CTRL) & ~(PMU_DEB_SFT_RST | PMU_QDEC_RST_DIS));
+
+    /* IRQ mode config */
+    ool_pd_write(PMU_REG_QDEC_CTRL0, 0x04);
+    /* filter enable */
+    ool_pd_write(PMU_REG_QDEC_CTRL1, 0x07);
+    /* filter value */
+    ool_pd_write(PMU_REG_QDEC_DEB_LEN, fu8_filter);
+    /* key select port */
+    ool_pd_write(PMU_REG_QDEC_MUX_0, (Key_A | Key_B));
+
+    /* enable pmu Anti shake key interrupt */
+    pmu_enable_isr(PMU_QDEC_INT_EN);
+}
+
 __attribute__((weak)) void pmu_gpio_isr(uint32_t pin_value)
+{
+}
+
+__attribute__((weak)) void pmu_Anti_shake_key_isr(void)
+{
+}
+
+__attribute__((weak)) void pmu_keyscan_isr(void)
 {
 }
 
@@ -816,7 +925,6 @@ __attribute__((section("ram_code"))) void pmu_isr(void)
 {
     uint16_t state = pmu_get_isr_state();
 
-    
     if(state & PMU_CALI_INT_STATUS) {
         /* restart calibration */
         pmu_get_rc_clk(true);
@@ -837,6 +945,17 @@ __attribute__((section("ram_code"))) void pmu_isr(void)
         system_lvd_protect_handle();
     }
     #endif
+
+    if(state & PMU_QDEC_INT_STATUS)
+    {
+        pmu_Anti_shake_key_isr();
+    }
+
+    if(state & PMU_KEYSCAN_INT_STATUS)
+    {
+        pmu_keyscan_isr();
+    }    
+    
     LOG_INFO(NULL, "pmu_isr: %04x.\r\n", state);
     pmu_clear_isr_state(state);
 }

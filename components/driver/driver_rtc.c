@@ -73,6 +73,7 @@ void rtc_AlarmConfig(e_alarm_t fe_Alarm, uint32_t fu32_hour, uint32_t fu32_Minut
             
             /* Convert to count value */
             lu32_Second *= pmu_get_rc_clk(false);
+            lu32_Second += rtc_GetCount();
     
             pmu_enable_isr(PMU_RTC_ALMA_INT_EN);
 
@@ -94,7 +95,8 @@ void rtc_AlarmConfig(e_alarm_t fe_Alarm, uint32_t fu32_hour, uint32_t fu32_Minut
             
             /* Convert to count value */
             lu32_Second *= pmu_get_rc_clk(false);
-    
+            lu32_Second += rtc_GetCount();
+
             pmu_enable_isr(PMU_RTC_ALMB_INT_EN);
 
             ool_pd_write(PMU_REG_PD_RTC_ALARMB_CNT_0, (lu32_Second & 0xFF));
@@ -153,6 +155,32 @@ void rtc_CountUpdate(uint32_t fu32_Count)
 
     AlarmTime_A.FirstBackup = 0;
     AlarmTime_B.FirstBackup = 0;
+}
+
+/*********************************************************************
+ * @fn      rtc_AlarmUpdate
+ *
+ * @brief   rtc alarm Update. 
+ *          Update according to the periodic period in the rtc_AlarmConfig function.
+ *
+ * @param   fe_Alarm:   alarm select.
+ */
+void rtc_AlarmUpdate(e_alarm_t fe_Alarm)
+{
+    uint32_t lu32_AddValue;
+    uint32_t lu32_AlarmValue;
+
+    /* Convert to count value */
+    if (fe_Alarm == AlARM_A)
+        lu32_AddValue = AlarmTime_A.FirstBackup * pmu_get_rc_clk(false);
+    else
+        lu32_AddValue = AlarmTime_B.FirstBackup * pmu_get_rc_clk(false);
+
+    lu32_AlarmValue = rtc_AlarmRead(fe_Alarm);
+
+    lu32_AlarmValue += lu32_AddValue;
+
+    rtc_AlarmSet(fe_Alarm, lu32_AlarmValue);
 }
 
 /*********************************************************************
@@ -316,18 +344,14 @@ __WEAK void rtc_AlarmHandler(void)
     {
         pmu_clear_isr_state(PMU_RTC_ALMA_INT_CLR);
 
-        /* Alarm cycle */
-        AlarmTime_A.CycleBackup += AlarmTime_A.FirstBackup;
-
-        rtc_AlarmConfig(AlARM_A, 0, 0, AlarmTime_A.CycleBackup);
+        /* Update according to the periodic period in the rtc_AlarmConfig function. */
+        rtc_AlarmUpdate(AlARM_A);
     }
     else if (pmu_get_isr_state() & PMU_RTC_ALMB_INT_STATUS) 
     {
         pmu_clear_isr_state(PMU_RTC_ALMB_INT_CLR);
 
-        /* Alarm cycle */
-        AlarmTime_B.CycleBackup += AlarmTime_B.FirstBackup;
-
-        rtc_AlarmConfig(AlARM_B, 0, 0, AlarmTime_B.CycleBackup);
+        /* Update according to the periodic period in the rtc_AlarmConfig function. */
+        rtc_AlarmUpdate(AlARM_B);
     }
 }

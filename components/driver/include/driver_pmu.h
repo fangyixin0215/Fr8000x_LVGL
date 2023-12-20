@@ -53,7 +53,7 @@
 
 #define PMU_REG_HDONKEY_CTRL        0x00
 #define PMU_REG_SBG_CTRL            0x01
-
+#define PMU_REG_VBE_CTRL            0x02
 #define PMU_REG_POWARN_CTRL         0x03
 
 #define PMU_REG_PKVDD_CFG_1         0x04
@@ -592,6 +592,45 @@ enum LVD_Voltage_Threshold{
     LVD_3_6_V, 
 };
 
+enum filter_Key_A{
+    FILTER_KEY_A_PA0,
+    FILTER_KEY_A_PA1,
+    FILTER_KEY_A_PA2,
+    FILTER_KEY_A_PA3,
+    FILTER_KEY_A_PA4,
+    FILTER_KEY_A_PA5,
+    FILTER_KEY_A_PA6,
+    FILTER_KEY_A_PA7,
+    
+    FILTER_KEY_A_PB0,
+    FILTER_KEY_A_PB1,
+    FILTER_KEY_A_PB2,
+    FILTER_KEY_A_PB3,
+    FILTER_KEY_A_PB4,
+    FILTER_KEY_A_PB5,
+    FILTER_KEY_A_PB6,
+    FILTER_KEY_A_PB7, 
+};
+
+enum filter_Key_B{
+    FILTER_KEY_B_PC0 = 0x10,
+    FILTER_KEY_B_PC1 = 0x20,
+    FILTER_KEY_B_PC2 = 0x30,
+    FILTER_KEY_B_PC3 = 0x40,
+    FILTER_KEY_B_PC4 = 0x50,
+    FILTER_KEY_B_PC5 = 0x60,
+    FILTER_KEY_B_PC6 = 0x70,
+    FILTER_KEY_B_PC7 = 0x80,
+    
+    FILTER_KEY_B_PD0 = 0x90,
+    FILTER_KEY_B_PD1 = 0xA0,
+    FILTER_KEY_B_PD2 = 0xB0,
+    FILTER_KEY_B_PD3 = 0xC0,
+    FILTER_KEY_B_PD4 = 0xD0,
+    FILTER_KEY_B_PD5 = 0xE0,
+    FILTER_KEY_B_PD6 = 0xF0,
+};
+
 /* Exported functions --------------------------------------------------------*/
 
 __STATIC_INLINE void pmu_porta_write(uint8_t value)
@@ -705,8 +744,12 @@ struct_ADC_Cal_Param_t *pmu_get_adc_cal_param(void);
     
 void pmu_low_speed_xtal_config(enum pmu_clock_sel_t pmu_clock_sel);
 
+void pmu_Anti_shake_key_config(enum filter_Key_A Key_A, enum filter_Key_B Key_B, uint8_t fu8_filter);
+
 void lvd_threshold(enum LVD_Voltage_Threshold Voltage_value);
 void pmu_lvd_en(uint8_t mode,enum LVD_Voltage_Threshold Voltage_value,uint8_t DEB_Len);
 
+void pmu_adc_power_control(bool fb_power);
+    
 #endif  //_DRIVER_PMU_H
  

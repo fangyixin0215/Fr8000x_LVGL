@@ -18,7 +18,7 @@
   *    int main(void)
   *    {
   *        NVIC_ClearPendingIRQ(USBMCU_IRQn);
-  *        NVIC_SetPriority(USBMCU_IRQn, 0);
+  *        NVIC_SetPriority(USBMCU_IRQn, 1);
   *        NVIC_EnableIRQ(USBMCU_IRQn);
   *
   *        usb_device_init();

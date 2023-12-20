@@ -46,6 +46,71 @@ void usb_device_init(void)
 }
 
 /*********************************************************************
+ * @fn      usb_host_init
+ *
+ * @brief   Initializes the usb-otg as a host.
+ */
+void usb_host_init(void)
+{
+    /* USB 12M clock enable */
+    /* USB 48M clock enable */
+    /* USB HCLK enable */
+    *(volatile uint32_t *)0x50000004 |= 0xE0000000;
+
+    /* USB_IO_PE0     = 1 */
+    /* USB_IO_PE1     = 1 */
+    /* USB_IO_PS0     = 0 */
+    /* USB_IO_PS1     = 0 */
+    /* OTG_VBUS_VAL_I = 1 */
+    /* OTG_VBUS_SES_I = 1 */
+    /* OTG_VBUSLO_I   = 1 */
+    /* OTG_CID_I      = 0 */
+    /* USB_STDBY_SEL  = 1 */
+    *(volatile uint32_t *)0x5000003C = 0x000C4709;
+
+    /* Disable USB all Interrupt except endpoint0 and Bus reset*/
+    USB->IntrUSBE = 0x30;    /* Enable Connect INT */
+    USB->IntrTx1E = 0x01;    /* Enable Endpoint0 INT */
+    USB->IntrTx2E = 0x00;
+    USB->IntrRx1E = 0x00;
+    USB->IntrRx2E = 0x00;
+
+    /* config data endpoint fifo */
+    usb_selecet_endpoint(ENDPOINT_1);   // 64Byte
+    usb_endpoint_Txfifo_config(64/8,  3);
+    usb_endpoint_Rxfifo_config(128/8, 3);
+    usb_TxMaxP_set(8);
+    usb_RxMaxP_set(8);
+
+    usb_selecet_endpoint(ENDPOINT_2);   // 64Byte
+    usb_endpoint_Txfifo_config(192/8, 3);
+    usb_endpoint_Rxfifo_config(256/8, 3);
+    usb_TxMaxP_set(8);
+    usb_RxMaxP_set(8);
+
+    usb_selecet_endpoint(ENDPOINT_3);   // 64Byte
+    usb_endpoint_Txfifo_config(320/8, 3);
+    usb_endpoint_Rxfifo_config(384/8, 3);
+    usb_TxMaxP_set(8);
+    usb_RxMaxP_set(8);
+
+    usb_selecet_endpoint(ENDPOINT_4);   // 64Byte
+    usb_endpoint_Txfifo_config(448/8, 3);
+    usb_endpoint_Rxfifo_config(512/8, 3);
+    usb_TxMaxP_set(8);
+    usb_RxMaxP_set(8);
+
+    usb_selecet_endpoint(ENDPOINT_5);   // 64Byte
+    usb_endpoint_Txfifo_config(576/8, 3);
+    usb_endpoint_Rxfifo_config(640/8, 3);
+    usb_TxMaxP_set(8);
+    usb_RxMaxP_set(8);
+
+    usb_selecet_endpoint(ENDPOINT_0);
+    usb_Host_Endpoint0_NAKlimit(0xFF);
+}
+
+/*********************************************************************
  * @fn      usb_selecet_endpoint
  *
  * @brief   Selected Endpoint
@@ -119,7 +184,33 @@ void usb_TxSyncEndpoint_enable(void)
  */
 void usb_RxSyncEndpoint_enable(void)
 {
-    USB_POINT1_5->RxCSR2 |= USB_RXCSR2_ISO;
+    USB_POINT1_5->RxCSR2 |= USB_RXCSR2_DEVICE_ISO;
+}
+
+/*********************************************************************
+ * @fn      usb_SignalInt_Enable
+ *
+ * @brief   Enable Signal detect interrupt.
+ *
+ * @param   fu8_Signal : Signal select.
+ * @return  None.
+ */
+void usb_SingleInt_Enable(uint8_t fu8_Signal)
+{
+    USB->IntrUSBE |= fu8_Signal;
+}
+
+/*********************************************************************
+ * @fn      usb_SignalInt_Disable
+ *
+ * @brief   Disable Signal detect interrupt.
+ *
+ * @param   fu8_Signal : Signal select.
+ * @return  None.
+ */
+void usb_SignalInt_Disable(uint8_t fu8_Signal)
+{
+    USB->IntrUSBE &= ~fu8_Signal;
 }
 
 /*********************************************************************
@@ -297,6 +388,118 @@ void usb_RxMaxP_set(uint32_t MaxPacket)
 }
 
 /*********************************************************************
+ * @fn      usb_Host_TxEndpointType
+ *
+ * @brief   In host mode, the tx endpoint type select.
+ *
+ * @param   fe_Type: Endpoint Type
+ * @return  None.
+ */
+void usb_Host_TxEndpointType(enum_HostEndpointType_t fe_Type)
+{
+    USB_POINT1_5->TxType &= ~USB_HOST_TXTYPE_PROTOCOL_MSK;
+    USB_POINT1_5->TxType |= fe_Type << USB_HOST_TXTYPE_PROTOCOL_POS;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_RxEndpointType
+ *
+ * @brief   In host mode, the rx endpoint type select.
+ *
+ * @param   fe_Type: Endpoint Type
+ * @return  None.
+ */
+void usb_Host_RxEndpointType(enum_HostEndpointType_t fe_Type)
+{
+    USB_POINT1_5->RxType &= ~USB_HOST_RXTYPE_PROTOCOL_MSK;
+    USB_POINT1_5->RxType |= fe_Type << USB_HOST_RXTYPE_PROTOCOL_POS;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_TxTargetEndpoint
+ *
+ * @brief   The tx target endpoint number of the host transmit.
+ *
+ * @param   fe_Type: Endpoint Type
+ * @return  None.
+ */
+void usb_Host_TxTargetEndpoint(uint8_t fu8_TargetEndpointNum)
+{
+    USB_POINT1_5->TxType &= ~USB_HOST_TXTYPE_TARGET_ENDP_NUM_MSK;
+    USB_POINT1_5->TxType |= fu8_TargetEndpointNum;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_RxTargetEndpoint
+ *
+ * @brief   The rx target endpoint number of the host receive.
+ *
+ * @param   fe_Type: Endpoint Type
+ * @return  None.
+ */
+void usb_Host_RxTargetEndpoint(uint8_t fu8_TargetEndpointNum)
+{
+    USB_POINT1_5->RxType &= ~USB_HOST_RXTYPE_TARGET_ENDP_NUM_MSK;
+    USB_POINT1_5->RxType |= fu8_TargetEndpointNum;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_TxPollingInterval
+ *
+ * @brief   Tx Polling Interval in interrup or isochronous transfers.
+ *          The unit is ms.(1 ~ 255)
+ *
+ * @param   fu8_TxInterval: Polling interval.
+ * @return  None.
+ */
+void usb_Host_TxPollingInterval(uint8_t fu8_TxInterval)
+{
+    USB_POINT1_5->TxInterval = fu8_TxInterval;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_TxNAKLimit
+ *
+ * @brief   Tx NAK limit in bulk transfer. NAK Limit 2 ~ 255.
+ *          Note: A value of 0 or 1 disable the NAK timeout function.
+ *
+ * @param   fu8_TxNAKLimit: Tx NAK limit value.
+ * @return  None.
+ */
+void usb_Host_TxNAKLimit(uint8_t fu8_TxNAKLimit)
+{
+    USB_POINT1_5->TxInterval = fu8_TxNAKLimit;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_RxPollingInterval
+ *
+ * @brief   Rx Polling Interval in interrup or isochronous transfers.
+ *          The unit is ms.(1 ~ 255)
+ *
+ * @param   fu8_RxInterval: Polling interval.
+ * @return  None.
+ */
+void usb_Host_RxPollingInterval(uint8_t fu8_RxInterval)
+{
+    USB_POINT1_5->RxInterval = fu8_RxInterval;
+}
+
+/*********************************************************************
+ * @fn      usb_Host_RxNAKLimit
+ *
+ * @brief   Rx NAK limit in bulk transfer. NAK Limit 2 ~ 255.
+ *          Note: A value of 0 or 1 disable the NAK timeout function.
+ *
+ * @param   fu8_RxNAKLimit: Rx NAK limit value.
+ * @return  None.
+ */
+void usb_Host_RxNAKLimit(uint8_t fu8_RxNAKLimit)
+{
+    USB_POINT1_5->RxInterval = fu8_RxNAKLimit;
+}
+
+/*********************************************************************
  * @fn      usb_write_fifo
  *
  * @brief   Write data to the endpoint fifo
@@ -365,4 +568,3 @@ void usb_DP_Pullup_Disable(void)
 {
     USB_OTG_CTRL->USB_IO_PS0 = 0;
 }
-

@@ -968,21 +968,22 @@ void gif_frame_update_event(lv_event_t* e)
 #endif
 void start_gif_decoder_init(void)
 {
-	  gif_flash_addr=0;
-		uint16_t *p_buf = (void *)GIF_PSRAM_ADDR;
-	  // c7c7c7
-	  #if (FREQCHIP_LOGO==1)
-		uint8_t rgb888_buf[3]={0xff,0xff,0xff};//背景色
-		#endif
-		#if (KTXCHIP_LOGO==1)
-		uint8_t rgb888_buf[3]={0xc7,0xc7,0xc7};//背景色
-		#endif
-	  
-		uint16_t rgb565_bg=gif_getrgb565(rgb888_buf);
-		my_memset(p_buf,rgb565_bg,(GIF_WIDTH_X*GIF_HIGHT_Y));
-		printf("12344\r\n");
-	  gif_display_defer(0, GIF_WIDTH_X, 0, GIF_HIGHT_Y, p_buf);
-	  gif_decode(gif_flash_addr,100,100,GIF_WIDTH_X,GIF_HIGHT_Y);
+	gif_flash_addr=0;
+	uint16_t *p_buf = (void *)GIF_PSRAM_ADDR;
+	// c7c7c7
+	#if (FREQCHIP_LOGO==1)
+	uint8_t rgb888_buf[3]={0xff,0xff,0xff};//背景色
+	#endif
+	#if (KTXCHIP_LOGO==1)
+	uint8_t rgb888_buf[3]={0xc7,0xc7,0xc7};//背景色
+	#endif
+
+	uint16_t rgb565_bg=gif_getrgb565(rgb888_buf);
+	my_memset(p_buf,rgb565_bg,(GIF_WIDTH_X*GIF_HIGHT_Y));
+	printf("gif_1\r\n");
+	gif_display_defer(0, GIF_WIDTH_X, 0, GIF_HIGHT_Y, p_buf);
+	gif_decode(gif_flash_addr,100,100,GIF_WIDTH_X,GIF_HIGHT_Y);
+	printf("gif_2\r\n");
 		
 }
 

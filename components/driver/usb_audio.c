@@ -19,7 +19,10 @@
 uint8_t gu8_Respond[5];
 uint8_t gu8_AudioReport;
 
-uint32_t gu32_SamplingFreq;
+uint32_t gu32_BitWidthSpeaker;
+uint32_t gu32_BitWidthMic;
+uint32_t gu32_PacketLengthSpeaker;
+uint32_t gu32_PacketLengthMic;
 uint32_t gu32_SamplingFreqSpeaker;
 uint32_t gu32_SamplingFreqMic;
 
@@ -70,15 +73,15 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
     /* Configuration Descriptor */
     0x09,    /* bLength */             
     0x02,    /* bDescriptorType */     
-    0xF1,    /* wTotalLength */        
-    0x00,                              
+    0x1C,    /* wTotalLength */        
+    0x01,                              
     0x04,    /* bNumInterfaces */      
     0x01,    /* bConfigurationValue */ 
     0x00,    /* iConfiguration */      
     0xC0,    /* bmAttributes */        
     0x32,    /* bMaxPower */           
 
-        /* HID Interface_0 Descriptor */
+        /* Audio Interface_0 Descriptor */
         0x09,    /* bLength */           
         0x04,    /* bDescriptorType */   
         0x00,    /* bInterfaceNumber */  
@@ -87,7 +90,7 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
         0x01,    /* bInterfaceClass: Audio */   
         0x01,    /* bInterfaceSubClass: Audio Control */
         0x00,    /* bInterfaceProtocol */
-        0x00,    /* iConfiguration */    
+        0x00,    /* iInterface */    
 
             /* Audio Control Interface Header Descriptor */
             0x0A,    /* bLength */
@@ -179,7 +182,7 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
             0x05,    /* bSourceID */
             0x00,    /* iTerminal */
 
-        /* HID Interface_1/0 Descriptor */
+        /* Audio Interface_1/0 Descriptor */
         0x09,    /* bLength */           
         0x04,    /* bDescriptorType */   
         0x01,    /* bInterfaceNumber */  
@@ -209,26 +212,26 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
             0x00,    /* bDelay */
             0x01,    /* wFormatTag: PCM */
             0x00,
-            
+
             /* Class-Specific AS Format Type Descriptor */
             0x14,    /* bLength */
             0x24,    /* bDescriptorType: CS_INTERFACE */
             0x02,    /* bDescriptorSubtype: FORMAT_TYPE */
             0x01,    /* bFormatType: FORMAT_TYPE_I */
             0x02,    /* bNrChannels */
-            0x02,    /* bSubframeSize */
-            0x10,    /* bBitResolution */
+               2,    /* bSubframeSize: 2-Byte */
+              16,    /* bBitResolution: 16-bit */
             0x04,    /* bSamFreqType */
-            0x80,    /* tSamFreq [1] */
+            0x80,    /* tSamFreq [1] : 16K */
             0x3E,
             0x00,
-            0x00,    /* tSamFreq [2] */
+            0x00,    /* tSamFreq [2] : 32K */
             0x7D,
             0x00, 
-            0x80,    /* tSamFreq [3] */
+            0x80,    /* tSamFreq [3] : 48K */
             0xBB,
             0x00,
-            0x00,    /* tSamFreq [4] */
+            0x00,    /* tSamFreq [4] : 96K */
             0x77,
             0x01,
 
@@ -237,8 +240,61 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
             0x05,    /* bDescriptorType */
             0x02,    /* bEndpointAddress: OUT 2 */
             0x0D,    /* bmAttributes: Isochronous */ 
-            0x00,    /* wMaxPacketSize: 256byte */
-            0x01,
+            0x00,    /* wMaxPacketSize: 512byte */
+            0x02,
+            0x01,    /* bInterval */
+            0x00,    /* bRefresh */
+            0x00,    /* bSynchAddress */
+            
+            /* Audio Streaming Isochronous Audio Data Endpoint Descriptor */
+            0x07,    /* bLength */
+            0x25,    /* bDescriptorType: CS_ENDPOINT */
+            0x01,    /* bDescriptorSubtype: EP_GENERAL */
+            0x01,    /* bmAttributes */
+            0x01,    /* bLockDelayUnits */
+            0x01,    /* wLockDelay */
+            0x00,    /*  */
+        /* HID Interface_1/2 Descriptor */
+        0x09,    /* bLength */           
+        0x04,    /* bDescriptorType */   
+        0x01,    /* bInterfaceNumber */  
+        0x02,    /* bAlternateSetting */ 
+        0x01,    /* bNumEndpoints */     
+        0x01,    /* bInterfaceClass: Audio */   
+        0x02,    /* bInterfaceSubClass: Audio Streaming */
+        0x00,    /* bInterfaceProtocol */
+        0x00,    /* iConfiguration */    
+
+            /* Class-Specific AS Interface Descriptor */
+            0x07,    /* bLength */
+            0x24,    /* bDescriptorType: CS_INTERFACE */
+            0x01,    /* bDescriptorSubtype: AS_GENERAL */
+            0x01,    /* bTerminalLink */
+            0x00,    /* bDelay */
+            0x01,    /* wFormatTag: PCM */
+            0x00,
+
+            /* Class-Specific AS Format Type Descriptor */
+            0x0B,    /* bLength */
+            0x24,    /* bDescriptorType: CS_INTERFACE */
+            0x02,    /* bDescriptorSubtype: FORMAT_TYPE */
+            0x01,    /* bFormatType: FORMAT_TYPE_I */
+            0x02,    /* bNrChannels */
+               3,    /* bSubframeSize: 3-Byte */
+              24,    /* bBitResolution: 24-bit */
+            0x04,    /* bSamFreqType */
+            0x80,    /* tSamFreq [1] : 48K */
+            0xBB,
+            0x00,
+
+
+            /* Endpoint 2 Descriptor */
+            0x09,    /* bLength */
+            0x05,    /* bDescriptorType */
+            0x02,    /* bEndpointAddress: OUT 2 */
+            0x0D,    /* bmAttributes: Isochronous */ 
+            0x00,    /* wMaxPacketSize: 512byte */
+            0x02,
             0x01,    /* bInterval */
             0x00,    /* bRefresh */
             0x00,    /* bSynchAddress */
@@ -252,7 +308,7 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
             0x01,    /* wLockDelay */
             0x00,    /*  */
 
-        /* HID Interface_2/0 Descriptor */
+        /* Audio Interface_2/0 Descriptor */
         0x09,    /* bLength */           
         0x04,    /* bDescriptorType */   
         0x02,    /* bInterfaceNumber */  
@@ -263,7 +319,7 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
         0x00,    /* bInterfaceProtocol */
         0x00,    /* iConfiguration */    
 
-        /* HID Interface_2/1 Descriptor */
+        /* Audio Interface_2/1 Descriptor */
         0x09,    /* bLength */           
         0x04,    /* bDescriptorType */   
         0x02,    /* bInterfaceNumber */  
@@ -310,8 +366,8 @@ const uint8_t USB_Audio_ConfigurationDesc[] =
             0x05,    /* bDescriptorType */
             0x81,    /* bEndpointAddress: IN 1 */
             0x0D,    /* bmAttributes: Isochronous */ 
-            0x60,    /* wMaxPacketSize: 96byte */
-            0x00,
+            0x00,    /* wMaxPacketSize: 256byte */
+            0x01,
             0x01,    /* bInterval */
             0x00,    /* bRefresh */
             0x00,    /* bSynchAddress */
@@ -411,7 +467,7 @@ const uint8_t USB_Audio_SerialNumberDesc[] =
     'B', 0x00,
     '1', 0x00,
     '3', 0x00,
-    '5', 0x00,
+    '6', 0x00,
 };
 
 /* USB Standard LanuageID Descriptor */
@@ -448,7 +504,7 @@ uint8_t USB_HID_Audio_ReportDesc[] =
 };
 
 /*********************************************************************
- * @fn      usb_hid_set_mouse_report
+ * @fn      usb_hid_set_Audio_report
  *
  * @brief   set report
  */
@@ -458,11 +514,33 @@ void usb_hid_set_Audio_report(uint8_t fu8_Value)
 }
 
 /*********************************************************************
+ * @fn      usb_hid_send_Audio_report
+ *
+ * @brief   set report
+ */
+int usb_hid_send_Audio_report(void)
+{
+    usb_selecet_endpoint(ENDPOINT_2);
+
+    if (usb_Endpoints_GET_TxPkrRdy() == false) 
+    {
+        usb_write_fifo(ENDPOINT_2, &gu8_AudioReport, 1);
+        usb_Endpoints_SET_TxPktRdy();
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+/*********************************************************************
  * @fn      usb_Audio_SetControl
  *
- * @brief   Set Speaker volume¡¢            Set  microphone volume
- *          Set Speaker Mute¡¢              Set  microphone Mute
- *          Set Speaker sampling frequency¡¢Set  microphone sampling frequency
+ * @brief   Set Speaker volume,             Set  microphone volume
+ *          Set Speaker Mute,               Set  microphone Mute
+ *          Set Speaker sampling frequency, Set  microphone sampling frequency
  */
 static void usb_Audio_SetControl(void)
 {
@@ -472,13 +550,25 @@ static void usb_Audio_SetControl(void)
 
     switch (ge_CTLIndex)
     {
-        case AUDIO_SET_VOL_SPEAKER:      usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu16_VolumeSpeaker,       lu8_RxCount); break;
-        case AUDIO_SET_VOL_MIC:          usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu16_VolumeMic,           lu8_RxCount); break;
-        case AUDIO_SET_MUTE_SPEAKER:     usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu8_MuteSpeaker,          lu8_RxCount); break;
-        case AUDIO_SET_MUTE_MIC:         usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu8_MuteMic,              lu8_RxCount); break;
-        case AUDIO_SET_SAMPLING_SPEAKER: usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu32_SamplingFreqSpeaker, lu8_RxCount); break;
-        case AUDIO_SET_SAMPLING_MIC:     usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu32_SamplingFreqMic,     lu8_RxCount); break;
-        
+        case AUDIO_SET_VOL_SPEAKER:      usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu16_VolumeSpeaker, lu8_RxCount); break;
+        case AUDIO_SET_VOL_MIC:          usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu16_VolumeMic,     lu8_RxCount); break;
+        case AUDIO_SET_MUTE_SPEAKER:     usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu8_MuteSpeaker,    lu8_RxCount); break;
+        case AUDIO_SET_MUTE_MIC:         usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu8_MuteMic,        lu8_RxCount); break;
+        case AUDIO_SET_SAMPLING_SPEAKER: 
+        {
+            usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu32_SamplingFreqSpeaker, lu8_RxCount);
+
+            void usb_Audio_ChangeSamplingRate_callback(uint8_t Index);
+            usb_Audio_ChangeSamplingRate_callback(AUDIO_SET_SAMPLING_SPEAKER);
+        }break;
+        case AUDIO_SET_SAMPLING_MIC:
+        {
+            usb_read_fifo(ENDPOINT_0, (uint8_t *)&gu32_SamplingFreqMic, lu8_RxCount);
+            
+            void usb_Audio_ChangeSamplingRate_callback(uint8_t Index);
+            usb_Audio_ChangeSamplingRate_callback(AUDIO_SET_SAMPLING_MIC);
+        }break;
+
         default: break; 
     }
 
@@ -629,13 +719,37 @@ static void usb_Audio_ClassRequest_Handler(usb_StandardRequest_t* pStandardReque
     }
 }
 
-extern volatile uint16_t MIC_Buffer[480];
+/*********************************************************************
+ * @fn      usb_hid_StandardClassRequest_Handler
+ *
+ * @brief   HID Standard Class Request Handler
+ *
+ * @param   None.
+ * @return  None.
+ */
+static void usb_hid_StandardClassRequest_Handler(usb_StandardRequest_t* pStandardRequest, usb_ReturnData_t* pReturnData)
+{
+    switch (pStandardRequest->wValue[1])
+    {
+        case DESCRIPTOR_HID_REPORT:
+        {
+            if (pStandardRequest->wIndex[0] == 3){
+                pReturnData->DataLength =  USB_HID_Audio_ReportDesc[0];
+                pReturnData->DataBuffer = &USB_HID_Audio_ReportDesc[1];
+            }
+        }break;
+
+        default: break; 
+    }
+}
+
+extern volatile uint16_t MIC_Buffer[960];
 extern volatile uint32_t MIC_Packet;
 extern volatile uint32_t MIC_RxCount;
 extern volatile uint32_t MIC_TxCount;
 extern volatile bool     MIC_Start;
 
-extern volatile uint32_t Speaker_Buffer[480];
+extern volatile uint32_t Speaker_Buffer[192 * 2 * 10];
 extern volatile uint32_t Speaker_Packet;
 extern volatile uint32_t Speaker_RxCount;
 extern volatile uint32_t Speaker_TxCount;
@@ -649,32 +763,60 @@ extern volatile bool     Speaker_Start;
  */
 void usb_Audio_Endpoints_Handler(uint8_t RxStatus, uint8_t TxStatus)
 {
-	uint32_t lu32_RxCount;
-	
+    uint32_t lu32_RxCount;
+
     /* ENDPOINT_2 Rx */
     if (RxStatus & 0x04) 
     {
+        /* Receive audio playback data */
         usb_selecet_endpoint(ENDPOINT_2);
 
         if (usb_Endpoints_GET_RxPktRdy())
         {
-            lu32_RxCount = usb_Endpoints_get_RxCount();
-
-            usb_read_fifo(ENDPOINT_2, (uint8_t *)&Speaker_Buffer[48 * Speaker_Packet], lu32_RxCount); 
-
-            usb_Endpoints_FlushRxFIFO();
-
-            Speaker_Packet += 1;
-
-            if (Speaker_Packet >= 10) 
+            switch (gu32_BitWidthSpeaker)
             {
-                Speaker_Packet = 0;
-            }
-			Speaker_RxCount = Speaker_Packet * 48;
+                case USB_AUDIO_DATA_WIDTH_16BIT:
+                {
+                    lu32_RxCount = usb_Endpoints_get_RxCount();
+                    usb_read_fifo(ENDPOINT_2, (uint8_t *)&Speaker_Buffer[gu32_PacketLengthSpeaker * Speaker_Packet], lu32_RxCount); 
+                    usb_Endpoints_FlushRxFIFO();
 
-            if (Speaker_Packet >= 5 && Speaker_Start == false) 
-            {
-                Speaker_Start = true;
+                    Speaker_Packet += 1;
+                    if (Speaker_Packet >= 10) 
+                    {
+                        Speaker_Packet = 0;
+                    }
+                    Speaker_RxCount = Speaker_Packet * gu32_PacketLengthSpeaker;
+
+                    if (Speaker_Packet >= 5 && Speaker_Start == false) 
+                    {
+                        Speaker_Start = true;
+                    }
+                }break;
+
+                case USB_AUDIO_DATA_WIDTH_24BIT:
+                {
+                    lu32_RxCount = usb_Endpoints_get_RxCount_16bit();
+
+                    uint32_t BufferIndex = (gu32_PacketLengthSpeaker * 2) * Speaker_Packet;
+                    for(int i = 0; i < lu32_RxCount/3; i++)
+                        usb_read_fifo(ENDPOINT_2, (uint8_t *)&Speaker_Buffer[BufferIndex + i], 3);
+                    usb_Endpoints_FlushRxFIFO();
+
+                    Speaker_Packet += 1;
+                    if (Speaker_Packet >= 10) 
+                    {
+                        Speaker_Packet = 0;
+                    }
+                    Speaker_RxCount = Speaker_Packet * (gu32_PacketLengthSpeaker * 2);
+
+                    if (Speaker_Packet >= 5 && Speaker_Start == false) 
+                    {
+                        Speaker_Start = true;
+                    }
+                }break;
+
+                default:break;
             }
         }
     }
@@ -682,24 +824,80 @@ void usb_Audio_Endpoints_Handler(uint8_t RxStatus, uint8_t TxStatus)
     /* ENDPOINT_1 Tx */
     if (TxStatus & 0x02)
     {
+        /* Send microphone data to Host */
         if (MIC_Start) 
         {
             usb_selecet_endpoint(ENDPOINT_1);
 
             if (usb_Endpoints_GET_TxPkrRdy() == false) 
             {
-                usb_write_fifo(ENDPOINT_1, (uint8_t *)&MIC_Buffer[MIC_TxCount], 96);
+                usb_write_fifo(ENDPOINT_1, (uint8_t *)&MIC_Buffer[MIC_TxCount], gu32_PacketLengthMic*2);
                 usb_Endpoints_SET_TxPktRdy();
 
-                MIC_TxCount += 48;
-                
-                if (MIC_TxCount >= 480) 
+                MIC_TxCount += gu32_PacketLengthMic;
+
+                if (MIC_TxCount >= gu32_PacketLengthMic*10) 
                 {
                     MIC_TxCount = 0;
                 }
-			}
+            }
         }
     }
+}
+
+void usb_Audio_InterfaceAlternateSet_callback(uint8_t Interface)
+{
+    switch (Interface)
+    {
+        /* Speaker Interface */
+        case 1:
+        {
+            /* Change the data bit width */
+            if (usbdev_get_interface_alternate_num(1) == 1)
+                gu32_BitWidthSpeaker = USB_AUDIO_DATA_WIDTH_16BIT;
+            else if (usbdev_get_interface_alternate_num(1) == 2)
+                gu32_BitWidthSpeaker = USB_AUDIO_DATA_WIDTH_24BIT;
+        }break;
+    
+        default:break;
+    }
+}
+
+void usb_Audio_ChangeSamplingRate_callback(uint8_t Index)
+{
+    switch (Index)
+    {
+        /* Change the Speaker sampling rate */
+        case AUDIO_SET_SAMPLING_SPEAKER: 
+        {
+            gu32_PacketLengthSpeaker = gu32_SamplingFreqSpeaker/1000;
+        }break;
+
+        /* Change the Mic sampling rate */
+        case AUDIO_SET_SAMPLING_MIC:
+        {
+            gu32_PacketLengthMic = gu32_SamplingFreqMic/1000;
+        }break;
+
+        default:break;
+    }
+}
+
+uint32_t usb_Audio_get_Speaker_Packet_Length(void)
+{
+    return gu32_PacketLengthSpeaker;
+}
+uint32_t usb_Audio_get_Mic_Packet_Length(void)
+{
+    return gu32_PacketLengthMic;
+}
+uint32_t usb_Audio_get_Speaker_Bit_Width(void)
+{
+    return gu32_BitWidthSpeaker;
+}
+uint32_t usb_Audio_get_Mic_Bit_Width(void)
+{
+    return gu32_BitWidthMic;
 }
 
 /*********************************************************************
@@ -716,152 +914,33 @@ void usb_audio_init(void)
     usbdev_get_dev_desc((uint8_t *)USB_Audio_DeviceDesc);
 
     usbdev_get_config_desc((uint8_t *)USB_Audio_ConfigurationDesc);
-    usbdev_get_hidreport_desc(3, (uint8_t *)USB_HID_Audio_ReportDesc);
     usbdev_get_string_Manufacture((uint8_t *)USB_Audio_ManufactureDesc);
     usbdev_get_string_Product((uint8_t *)USB_Audio_ProductDesc);
     usbdev_get_string_SerialNumber((uint8_t *)USB_Audio_SerialNumberDesc);
     usbdev_get_string_LanuageID((uint8_t *)USB_Audio_LanuageIDDesc);
 
+    Endpoint_0_StandardClassRequest_Handler = usb_hid_StandardClassRequest_Handler;
     Endpoint_0_ClassRequest_Handler = usb_Audio_ClassRequest_Handler;
 
     Endpoints_Handler = usb_Audio_Endpoints_Handler;
+
+    USB_InterfaceAlternateSet_callback = usb_Audio_InterfaceAlternateSet_callback;
 
     USB_Reset_Handler = usb_audio_init;
 
     /* config data endpoint fifo */
     usb_selecet_endpoint(ENDPOINT_1);
     usb_TxSyncEndpoint_enable();
-    usb_endpoint_Txfifo_config(0x08, 4);    /* 128 Byte, 64  ~ 191 */
-    usb_TxMaxP_set(16);
+    usb_endpoint_Txfifo_config(64/8, 5);    /* 256 Byte, 64  ~ 319 */
+    usb_TxMaxP_set(256/8);
 
     usb_selecet_endpoint(ENDPOINT_2);
     usb_RxSyncEndpoint_enable();
-    usb_endpoint_Rxfifo_config(0x18, 5);    /* 256 Byte, 192 ~ 447 */
-    usb_RxMaxP_set(32);
-    usb_endpoint_Txfifo_config(0x38, 1);    /* 16 Byte,  448 ~ 464 */
-    usb_TxMaxP_set(2);
+    usb_endpoint_Rxfifo_config(320/8, 6);    /* 512 Byte, 320 ~ 831 */
+    usb_RxMaxP_set(512/8);
+    usb_endpoint_Txfifo_config(832/8, 1);    /* 16 Byte,  832 ~ 464 */
+    usb_TxMaxP_set(16/8);
 
     usb_TxInt_Enable(ENDPOINT_1);
     usb_RxInt_Enable(ENDPOINT_2);
 }
-
-/*
-    How to use, for example:
-
-volatile uint16_t MIC_Buffer[480];
-volatile uint32_t MIC_Packet;
-volatile uint32_t MIC_RxCount;
-volatile uint32_t MIC_TxCount;
-volatile bool     MIC_Start;
-
-volatile uint32_t Speaker_Buffer[480];
-volatile uint32_t Speaker_Packet;
-volatile uint32_t Speaker_RxCount;
-volatile uint32_t Speaker_TxCount;
-volatile bool     Speaker_Start;
-
-void main()
-{
-    NVIC_ClearPendingIRQ(USBMCU_IRQn);
-    NVIC_SetPriority(USBMCU_IRQn, 0);
-    NVIC_EnableIRQ(USBMCU_IRQn);
-
-    usb_device_init();
-    usb_audio_init();
-
-    // Wait for other initialization of the MCU
-
-    usb_DP_Pullup_Enable();
-
-    while(1)
-    {
-        if (digital_codec_reg->adcff_cfg1.afull_status)
-        {
-            MIC_RxCount = MIC_Packet * 48;
-
-            for (i = 0; i < 48; i++)
-            {
-                MIC_Buffer[MIC_RxCount + i] = digital_codec_reg->adcff_data;
-            }
-
-            MIC_Packet += 1;
-
-            if (MIC_Packet >= 10) 
-            {
-                MIC_Packet = 0;
-            }
-
-            if (MIC_Packet >= 5 && MIC_Start == false) 
-            {
-                usb_selecet_endpoint(ENDPOINT_1);
-                
-                // start the frist packet transmission
-                if (usb_Endpoints_GET_TxPkrRdy() == false) 
-                {
-                    usb_write_fifo(ENDPOINT_1, (uint8_t *)&MIC_Buffer[MIC_TxCount], 96);
-                    usb_Endpoints_SET_TxPktRdy();
-
-                    MIC_TxCount += 48;
-
-                     MIC_Start = true;
-                }
-                // start fail
-                else 
-                {
-                    MIC_Packet  = 0;
-                    MIC_RxCount = 0;
-                    MIC_TxCount = 0;
-                    MIC_Start   = false;
-                }
-            }
-
-            if (MIC_Start) 
-            {
-                if (MIC_RxCount == MIC_TxCount) 
-                {
-                    MIC_Packet  = 0;
-                    MIC_RxCount = 0;
-                    MIC_TxCount = 0;
-                    MIC_Start   = false;
-                }
-            }
-	    }
-
-        if (Send_HID_Report)
-        {
-            usb_selecet_endpoint(ENDPOINT_2);
-
-            if (usb_Endpoints_GET_TxPkrRdy() == false) 
-            {
-                usb_write_fifo(ENDPOINT_2, &gu8_AudioReport, 1);
-                usb_Endpoints_SET_TxPktRdy();
-            }
-        }
-
-        if (Speaker_Start) 
-        {
-            if (digital_codec_reg->dacff_cfg1.aept_status)
-            {
-                for (i = 0; i < 48; i++)
-                {
-                    digital_codec_reg->dacff_data = Speaker_Buffer[Speaker_TxCount++];
-                }
-
-                if (Speaker_TxCount >= 480) 
-                {
-                    Speaker_TxCount = 0;
-                }
-
-                if (Speaker_TxCount == Speaker_RxCount) 
-                {
-                    Speaker_Packet  = 0;
-                    Speaker_RxCount = 0;
-                    Speaker_TxCount = 0;
-                    Speaker_Start   = false;
-                }
-            }
-        }
-    }
-}
-
-*/

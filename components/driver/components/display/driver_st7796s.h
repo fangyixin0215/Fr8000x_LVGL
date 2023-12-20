@@ -20,3 +20,8 @@ void st7796s_set_window(uint16_t x_s, uint16_t x_e, uint16_t y_s, uint16_t y_e);
 void st7796s_dma_isr(void);
  
 #endif
+
+
+
+
+

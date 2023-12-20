@@ -112,8 +112,17 @@ unsigned int CPU_SR_Save(unsigned char);
 void CPU_SR_Restore(CPU_SR reg);
 #define GLOBAL_INT_RESTORE()    CPU_SR_Restore(cpu_sr)
 
-
 void platform_reset(uint32_t error);
+
+/*********************************************************************
+ * @fn      get_SDK_compile_date_time
+ *
+ * @brief   get the SDK compile date time.
+ * 
+ * @param   date: pointer to the compile date.
+ * @param   time: pointer to the compile time.
+ */
+void get_SDK_compile_date_time(char **date, char **time);
 
 #endif  // _PLF_H
 

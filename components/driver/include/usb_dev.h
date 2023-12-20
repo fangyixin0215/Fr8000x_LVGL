@@ -38,9 +38,6 @@ typedef struct
     uint32_t DataLength;
 }usb_ReturnData_t;
 
-
-#define HID_MAX_REPORT_NUM    (10)
-
 /* USB Device descriptors structure */
 typedef struct
 {
@@ -48,7 +45,7 @@ typedef struct
     uint8_t  *ConfigurationDescriptor;
     uint8_t  *InterfaceStrDescriptor;
     uint8_t  *EndpointDescriptor;
-    uint8_t  *HIDReportDescriptor[HID_MAX_REPORT_NUM];
+
     uint8_t  *stringManufacture;
     uint8_t  *stringProduct;
     uint8_t  *stringSerialNumber;
@@ -112,14 +109,28 @@ typedef struct
 #define REQUEST_SET_INTERFACE           (11)
 #define REQUEST_SYNCH_FRAME             (12)
 
-/* Descriptor type and number */
-#define DESCRIPTOR_DEVICE               (1)
-#define DESCRIPTOR_CONFIGURATION        (2)
-#define DESCRIPTOR_STRING               (3)
-#define DESCRIPTOR_INTERFACE            (4)
-#define DESCRIPTOR_ENPOINT              (5)
-#define DESCRIPTOR_DEVICE_QUALIFIER     (6)
-#define DESCRIPTOR_HID_REPORT           (34)    /* 0x22 */
+/* USB2.0 Descriptor type and number */
+#define DESCRIPTOR_DEVICE                       (1)
+#define DESCRIPTOR_CONFIGURATION                (2)
+#define DESCRIPTOR_STRING                       (3)
+#define DESCRIPTOR_INTERFACE                    (4)
+#define DESCRIPTOR_ENPOINT                      (5)
+#define DESCRIPTOR_DEVICE_QUALIFIER             (6)
+#define DESCRIPTOR_OTHER_SPEED_CONFIGURATION    (7)
+#define DESCRIPTOR_INTERFACE_POWER              (8)
+/* HID class standard descriptor */
+#define DESCRIPTOR_HID                          (33)    /* 0x21 */
+#define DESCRIPTOR_HID_REPORT                   (34)    /* 0x22 */
+#define DESCRIPTOR_HID_PHYSICAL                 (35)    /* 0x23 */
+
+/* USB3.2 Descriptor type and number */
+#define DESCRIPTOR_OTG                          (9)
+#define DESCRIPTOR_DEBUG                        (10)
+#define DESCRIPTOR_INTERFACE_ASSOCIATION        (11)
+#define DESCRIPTOR_BOS                          (15)
+#define DESCRIPTOR_DEVICE_CAPABILITY            (16)
+#define DESCRIPTOR_SUPERSPEED_USB_ENDPOINT_COMPANION                (48)
+#define DESCRIPTOR_SUPERSPEEDPLUS_ISOCHRONOUS_ENDPOINT_COMPANION    (49)
 /* string index */
 #define STRING_MANUFACTURE              (1)
 #define STRING_PRODUCT                  (2)
@@ -129,6 +140,7 @@ typedef struct
 
 
 /* Exported Variate ----------------------------------------------------------*/
+extern void (*Endpoint_0_StandardClassRequest_Handler)(usb_StandardRequest_t* pStandardRequest, usb_ReturnData_t* pReturnData);
 extern void (*Endpoint_0_ClassRequest_Handler)(usb_StandardRequest_t* pStandardRequest, usb_ReturnData_t* pReturnData);
 extern void (*Endpoint_0_VendorRequest_Handler)(usb_StandardRequest_t* pStandardRequest, usb_ReturnData_t* pReturnData);
 
@@ -136,7 +148,13 @@ extern void (*Endpoint_0_DataOut_Handler)(void);
 
 extern void (*Endpoints_Handler)(uint8_t RxStatus, uint8_t TxStatus);
 
+extern void (*USB_SOF_Handler)(void);
 extern void (*USB_Reset_Handler)(void);
+extern void (*USB_Resume_Handler)(void);
+extern void (*USB_Suspend_Handler)(void);
+extern void (*USB_Connect_Handler)(void);
+
+extern void (*USB_InterfaceAlternateSet_callback)(uint8_t Interface);
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -146,14 +164,18 @@ void usbdev_get_dev_desc(uint8_t *Descriptor);
 /* usbdev_get_config_desc */
 void usbdev_get_config_desc(uint8_t *Descriptor);
 
-/* usbdev_get_hidreport_desc */
-void usbdev_get_hidreport_desc(uint8_t fu8_ReportIndex, uint8_t *Descriptor);
-
 /* string Descriptor */
 void usbdev_get_string_Manufacture(uint8_t *Descriptor);
 void usbdev_get_string_Product(uint8_t *Descriptor);
 void usbdev_get_string_SerialNumber(uint8_t *Descriptor);
 void usbdev_get_string_LanuageID(uint8_t *Descriptor);
 void usbdev_get_string_OS(uint8_t *Descriptor);
+
+uint16_t usbdev_get_device_status(void);
+uint16_t usbdev_get_in_endpoints_status(uint32_t index);
+uint16_t usbdev_get_out_endpoints_status(uint32_t index);
+uint8_t usbdev_get_device_configuration_num(void);
+uint8_t usbdev_get_interface_alternate_num(uint32_t index);
+
 
 #endif

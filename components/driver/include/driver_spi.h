@@ -270,9 +270,10 @@ typedef struct
     uint32_t  Work_Mode;                /* This parameter can be a value of @ref enum_Work_Mode_t */
 
     uint32_t  Frame_Size;               /* This parameter can be a value of @ref enum_FrameSize_t */
-    
-    uint32_t  BaudRate_Prescaler;       /* This parameter can be a value 2 ~ 65534 */
-    
+
+    uint32_t  BaudRate_Prescaler;       /* This parameter can be a value 2 ~ 65534.
+                                           It mast to be a multiple of 2. */
+
     uint32_t  TxFIFOEmpty_Threshold;    /* This parameter can be a 4bit value */
 
     uint32_t  RxFIFOFull_Threshold;     /* This parameter can be a 4bit value */

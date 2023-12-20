@@ -18,7 +18,7 @@
   *    int main(void)
   *    {
   *        NVIC_ClearPendingIRQ(USBMCU_IRQn);
-  *        NVIC_SetPriority(USBMCU_IRQn, 0);
+  *        NVIC_SetPriority(USBMCU_IRQn, 1);
   *        NVIC_EnableIRQ(USBMCU_IRQn);
   *
   *        usb_device_init();
@@ -66,6 +66,38 @@ const uint8_t USB_HID_DeviceDesc[] =
     0x01,    /* bNumConfigurations */
 };
 
+/* HID Descriptor */
+#define HID_DESCRIPTOR_0        0x09,    /* bLength */                  \
+                                0x21,    /* bDescriptorType: HID */     \
+                                0x10,    /* bcdHID: 1.10 */             \
+                                0x01,                                   \
+                                0x21,    /* bCountryCode */             \
+                                0x01,    /* bNumDescriptors */          \
+                                0x22,    /* bDescriptorType: Report */  \
+                                0x2E,    /* wDescriptorLength */        \
+                                0x00
+
+/* HID Descriptor */
+#define HID_DESCRIPTOR_1        0x09,    /* bLength */                  \
+                                0x21,    /* bDescriptorType: HID */     \
+                                0x10,    /* bcdHID: 1.10 */             \
+                                0x01,                                   \
+                                0x21,    /* bCountryCode */             \
+                                0x01,    /* bNumDescriptors */          \
+                                0x22,    /* bDescriptorType: Report */  \
+                                0x41,    /* wDescriptorLength */        \
+                                0x00
+
+const uint8_t USB_HID_Desc_0[] =
+{
+    HID_DESCRIPTOR_0,
+};
+
+const uint8_t USB_HID_Desc_1[] =
+{
+    HID_DESCRIPTOR_1,
+};
+
 /* USB Standard Configuration Descriptor */
 const uint8_t USB_HID_ConfigurationDesc[] =
 {
@@ -77,9 +109,9 @@ const uint8_t USB_HID_ConfigurationDesc[] =
     0x02,    /* bNumInterfaces */      
     0x01,    /* bConfigurationValue */ 
     0x00,    /* iConfiguration */      
-    0x80,    /* bmAttributes */        
+    0xA0,    /* bmAttributes */        
     0x32,    /* bMaxPower */           
-    
+
     /* HID Interface_0 Descriptor */
     0x09,    /* bLength */           
     0x04,    /* bDescriptorType */   
@@ -92,15 +124,7 @@ const uint8_t USB_HID_ConfigurationDesc[] =
     0x00,    /* iConfiguration */    
 
     /* HID Descriptor */
-    0x09,    /* bLength */
-    0x21,    /* bDescriptorType: HID */        
-    0x10,    /* bcdHID: 1.10 */
-    0x01,    
-    0x21,    /* bCountryCode */
-    0x01,    /* bNumDescriptors */
-    0x22,    /* bDescriptorType: Report */
-    0x2E,    /* wDescriptorLength */
-    0x00,
+    HID_DESCRIPTOR_0,
 
     /* Endpoint 1 Descriptor */
     0x07,    /* bLength */
@@ -124,15 +148,7 @@ const uint8_t USB_HID_ConfigurationDesc[] =
     0x00,    /* iConfiguration */
 
     /* HID Descriptor */
-    0x09,    /* bLength */
-    0x21,    /* bDescriptorType: HID */        
-    0x10,    /* bcdHID: 1.10 */
-    0x01,    
-    0x21,    /* bCountryCode */
-    0x01,    /* bNumDescriptors */
-    0x22,    /* bDescriptorType: Report */
-    0x41,    /* wDescriptorLength */
-    0x00,
+    HID_DESCRIPTOR_1,
 
     /* Endpoint 2 IN Descriptor */
     0x07,    /* bLength */
@@ -446,6 +462,88 @@ void usb_hid_send_keyboard_report(void)
 }
 
 /*********************************************************************
+ * @fn      usb_hid_ClassRequest_Handler
+ *
+ * @brief   HID Class Request Handler
+ *
+ * @param   None.
+ * @return  None.
+ */
+static void usb_hid_ClassRequest_Handler(usb_StandardRequest_t* pStandardRequest, usb_ReturnData_t* pReturnData)
+{
+    static uint8_t HID_Protocol = 1;    // 0: Boot   Protocol
+                                        // 1: Report Protocol
+
+    switch (pStandardRequest->bRequest)
+    {
+        case HID_GET_PROTOCOL:
+        {
+            pReturnData->DataBuffer = &HID_Protocol;
+            pReturnData->DataLength = 1;
+        }break;
+
+        case HID_SET_PROTOCOL:
+        {
+            HID_Protocol = pStandardRequest->wValue[0];
+        }break;
+
+        case HID_GET_IDLE:
+        {
+            /* Device does not support Getidle command */
+            usb_Endpoint0_SendStall();
+        }break;
+
+        case HID_SET_IDLE:
+        {
+            /* Device does not support Setidle command */
+            usb_Endpoint0_SendStall();
+        }break;
+
+        default: break; 
+    }
+}
+
+/*********************************************************************
+ * @fn      usb_hid_StandardClassRequest_Handler
+ *
+ * @brief   HID Standard Class Request Handler
+ *
+ * @param   None.
+ * @return  None.
+ */
+static void usb_hid_StandardClassRequest_Handler(usb_StandardRequest_t* pStandardRequest, usb_ReturnData_t* pReturnData)
+{
+    switch (pStandardRequest->wValue[1])
+    {
+        case DESCRIPTOR_HID_REPORT:
+        {
+            if (pStandardRequest->wIndex[0] == 0){
+                pReturnData->DataLength =  USB_HID_Mouse_ReportDesc[0];
+                pReturnData->DataBuffer = &USB_HID_Mouse_ReportDesc[1];
+            }
+            else if (pStandardRequest->wIndex[0] == 1){
+                pReturnData->DataLength =  USB_HID_Keyboard_ReportDesc[0];
+                pReturnData->DataBuffer = &USB_HID_Keyboard_ReportDesc[1];
+            }
+        }break;
+
+        case DESCRIPTOR_HID:
+        {
+            if (pStandardRequest->wIndex[0] == 0){
+                pReturnData->DataLength = 9;
+                pReturnData->DataBuffer = (uint8_t *)USB_HID_Desc_0;
+            }
+            else if (pStandardRequest->wIndex[0] == 1){
+                pReturnData->DataLength = 9;
+                pReturnData->DataBuffer = (uint8_t *)USB_HID_Desc_1;
+            }
+        }break;
+
+        default: break; 
+    }
+}
+
+/*********************************************************************
  * @fn      usb_hid_Endpoints_Handler
  *
  * @brief   hid Endpoints Handler
@@ -483,12 +581,13 @@ void usb_hid_init(void)
     /* Initialize the relevant pointer  */
     usbdev_get_dev_desc((uint8_t *)USB_HID_DeviceDesc);
     usbdev_get_config_desc((uint8_t *)USB_HID_ConfigurationDesc);
-    usbdev_get_hidreport_desc(0, (uint8_t *)USB_HID_Mouse_ReportDesc);
-    usbdev_get_hidreport_desc(1, (uint8_t *)USB_HID_Keyboard_ReportDesc);
     usbdev_get_string_Manufacture((uint8_t *)USB_HID_ManufactureDesc);
     usbdev_get_string_Product((uint8_t *)USB_HID_ProductDesc);
     usbdev_get_string_SerialNumber((uint8_t *)USB_HID_SerialNumberDesc);
     usbdev_get_string_LanuageID((uint8_t *)USB_HID_LanuageIDDesc);
+
+    Endpoint_0_StandardClassRequest_Handler = usb_hid_StandardClassRequest_Handler;
+    Endpoint_0_ClassRequest_Handler = usb_hid_ClassRequest_Handler;
 
     Endpoints_Handler = usb_hid_Endpoints_Handler;
 
@@ -506,5 +605,9 @@ void usb_hid_init(void)
     usb_TxMaxP_set(8);
     usb_RxMaxP_set(8);
     usb_RxInt_Enable(ENDPOINT_2);
+
+    usb_SuspendDetectEn();
+    usb_SingleInt_Enable(USB_INT_STATUS_SUSPEND);
+    usb_SingleInt_Enable(USB_INT_STATUS_RESUME);
 }
 

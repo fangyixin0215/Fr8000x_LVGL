@@ -28,7 +28,7 @@
 void adc_init(adc_InitParameter_t InitParam)
 {
     /* power on ADC module */
-    ool_write(PMU_REG_ADC_CFG, ool_read(PMU_REG_ADC_CFG) | 0x80);
+    pmu_adc_power_control(true);
 
     /* ADC FIFO Config */
     ADC->CONTROL.FIFO_EN                = InitParam.FIFO_Enable;
@@ -127,6 +127,9 @@ void adc_VBE_ConvertConfig(void)
 
     /* sample source */
     ADC->ANA_CTRL0.SAMPLE_SIG_SEL = VBE;
+    
+    /* VBE reference select BBG */
+    ool_write(PMU_REG_VBE_CTRL, ool_read(PMU_REG_VBE_CTRL) | 0x80);
 }
 
 /*********************************************************************

@@ -16,8 +16,6 @@
 */
 #include "driver_keyscan.h"
 
-uint32_t KeyValue[5];
-
 /*********************************************************************
  * @fn      keyscan_init
  *
@@ -147,19 +145,15 @@ void keyscan_init(str_KeyScanParam_t KeyScanParam)
  *
  * @brief   read key value.
  *
- * @param   None.
- * @return  None.
+ * @param   fp_KeyBuffer: Points to the key-value store buffer.
  */
 void keyscan_ReadKeyValue(uint32_t *fp_KeyBuffer)
 {
-    uint32_t i;
-    
-    for (i = 0; i < 5; i++)
-    {
-        fp_KeyBuffer[i] = ool_pd_read32(PMU_REG_PD_KEYSCAN_VAL_00 + i * 4);
-        
-        co_printf("%08x\r\n", fp_KeyBuffer[i]);
-    }
+    fp_KeyBuffer[0] = ool_pd_read32(PMU_REG_PD_KEYSCAN_VAL_00);
+    fp_KeyBuffer[1] = ool_pd_read32(PMU_REG_PD_KEYSCAN_VAL_04);
+    fp_KeyBuffer[2] = ool_pd_read32(PMU_REG_PD_KEYSCAN_VAL_08);
+    fp_KeyBuffer[3] = ool_pd_read32(PMU_REG_PD_KEYSCAN_VAL_0c);
+    fp_KeyBuffer[4] = ool_pd_read32(PMU_REG_PD_KEYSCAN_VAL_10);
 } 
 
 /*********************************************************************
@@ -173,18 +167,10 @@ void keyscan_ReadKeyValue(uint32_t *fp_KeyBuffer)
 void keyscan_IRQHandler(void)
 {
     uint8_t lu8_CTRL_REG;
+    lu8_CTRL_REG = ool_pd_read(PMU_REG_PD_KEYSCAN_CTRL);
     
-    if (pmu_get_isr_state() & PMU_KEYSCAN_INT_STATUS) 
-    {
-        lu8_CTRL_REG = ool_pd_read(PMU_REG_PD_KEYSCAN_CTRL);
-        
-        ool_pd_write(PMU_REG_PD_KEYSCAN_CTRL, lu8_CTRL_REG | PMU_KEYSCAN_VAL_CLR);
-        
-        pmu_clear_isr_state(PMU_KEYSCAN_INT_CLR);
-        
-        keyscan_ReadKeyValue(KeyValue);
-
-        ool_pd_write(PMU_REG_PD_KEYSCAN_CTRL, lu8_CTRL_REG & ~PMU_KEYSCAN_VAL_CLR);
-    }
+    ool_pd_write(PMU_REG_PD_KEYSCAN_CTRL, lu8_CTRL_REG | PMU_KEYSCAN_VAL_CLR);
+    co_delay_10us(3);
+    ool_pd_write(PMU_REG_PD_KEYSCAN_CTRL, lu8_CTRL_REG & ~PMU_KEYSCAN_VAL_CLR);
 }
 

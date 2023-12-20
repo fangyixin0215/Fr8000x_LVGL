@@ -22,6 +22,9 @@
 #include "usb_core.h"
 #include "usb_dev.h"
 
+#define USB_AUDIO_DATA_WIDTH_16BIT    (16)
+#define USB_AUDIO_DATA_WIDTH_24BIT    (24)
+
 /* Audio Class Specific Request Codes */
 typedef enum
 {
@@ -75,12 +78,25 @@ typedef enum
     AUDIO_REPORT_RSV        = 0x80,
 }Audio_Report;
 
-/* Exported inline functions --------------------------------------------------------*/
+/* Exported Variate ----------------------------------------------------------*/
+
+
+/* Exported functions --------------------------------------------------------*/
 
 /* usb_audio_init */
 void usb_audio_init(void);
 
 /* usb_hid_set_Audio_report */
 void usb_hid_set_Audio_report(uint8_t fu8_Value);
+
+/* usb_hid_send_Audio_report */
+int usb_hid_send_Audio_report(void);
+
+/* get Speaker Packet Length/Data Bit Width */
+/* get Mic Packet Length/Data Bit Width */
+uint32_t usb_Audio_get_Speaker_Packet_Length(void);
+uint32_t usb_Audio_get_Speaker_Bit_Width(void);
+uint32_t usb_Audio_get_Mic_Packet_Length(void);
+uint32_t usb_Audio_get_Mic_Bit_Width(void);
 
 #endif

@@ -214,6 +214,10 @@ typedef struct
         gatt_uuid_t new_uuid;       //!< New Attribute UUID
         uint16_t    new_prop;       //!< New Attribute properties, see @GATT_PROP_BITMAPS_DEFINES
     } param;
+
+    /*for new_prop include read */
+    uint8_t  uuid_size;
+    uint16_t max_length;
 } svc_change_t;
 
 
@@ -435,23 +439,26 @@ void gatt_add_client_uuid(gatt_uuid_t att_tb[], uint8_t att_nb, uint8_t conn_idx
  * @fn      gatt_delete_svc
  *
  * @brief   Delete services which is created already
- *          svc_uuid - pointer to services uuid buffer.
- *          uuid_size - services uuid size.
-
- * @param   None
  *
- * @return  None.
+ * @param   svc_uuid  - The uuid of the service you want to delete 
+ *          uuid_size - uuid size, 2 bytes or 16 bytes
+ *          svc_id    - return value of gatt_add_service(); when deleting the GAP(uuid:0x1800) or GATT(uuid:0x1801) service, svc_id must be 0xff
+ *
+ * @return  true or false.
 
-   example :   //in this case, delete gap & gatt services.
+   example :   //in this case, delete GATT(uuie:0x1801) service and a user-defined service(uuid:0xFFF0).
    func()
    {
-       uint16_t svc_uuid = 0x1801;
-       gatt_delete_svc((uint8_t *)&svc_uuid,2);
-       svc_uuid = 0x1800;
-       gatt_delete_svc((uint8_t *)&svc_uuid,2);
+       uint8_t svc_id = gatt_add_service(...);
+
+       uint8_t svc_uuid[2] = {0x01, 0x18};
+       gatt_delete_svc(svc_uuid, 2, 0xff);
+
+       uint8_t svc_uuid_user[2] = {0xF0, 0xFF}
+       gatt_delete_svc(svc_uuid_user, 2, svc_id);
    }
  */
-void gatt_delete_svc(uint8_t *svc_uuid,uint8_t uuid_size);
+bool gatt_delete_svc(uint8_t *svc_uuid,uint8_t uuid_size, uint8_t svc_id);
 
 /*********************************************************************
  * @fn      gatt_get_svc_hdl

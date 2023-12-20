@@ -940,7 +940,7 @@ void main()
     spi_master_init(&SPI0_Handle);
 
     NVIC_EnableIRQ(SPIM0_IRQn);
-    NVIC_SetPriority(SPIM0_IRQn, 0);
+    NVIC_SetPriority(SPIM0_IRQn, 1);
 
     for (i = 0; i < 256; i++)
     {

@@ -21,6 +21,118 @@
 #include "driver_system.h"
 #include "plf.h"
 
+/*
+ *  PortA MUX
+ *              | PA0            | PA1            | PA2            | PA3            | PA4            | PA5            | PA6            | PA7            |
+ * -----------------------------------------------------------------------------------------------------------------------------------------------
+ * 0x0          | GPIO_A0        | GPIO_A1        | GPIO_A2        | GPIO_A3        | GPIO_A4        | GPIO_A5        | GPIO_A6        | GPIO_A7        |
+ * 0x1          | I2C0_CLK       | I2C0_DAT       | I2C1_CLK       | I2C1_DAT       | I2C0_CLK       | I2C0_DAT       | I2C1_CLK       | I2C1_DAT       |
+ * 0x2          | SPI0_M_CLK     | SPI0_M_CS      | SPI0_M_IO0     | SPI0_M_IO1     | SPI0_M_IO2     | SPI0_M_IO3     | SPI0_M_CLK     | SPI0_M_CS      |
+ * 0x3          | SPI_S_CLK      | SPI_S_CS       | SPI_S_MOSI     | SPI_S_MISO     | SPI_S_CLK      | SPI_S_CS       | SPI_S_MOSI     | SPI_S_MISO     |
+ * 0x4          | UART0_Rx       | UART0_Tx       | UART0_RTS      | UART0_CTS      | UART0_Rx       | UART0_Tx       | UART0_RTS      | UART0_CTS      |
+ * 0x5          | USB_DP         | USB_DM         | UART1_Rx       | UART1_Tx       | USB_DP         | USB_DM         | UART1_Rx       | UART1_Tx       |
+ * 0x6          | PWM0           | PWM1           | PWM2           | PWM3           | PWM4           | PWM5           | PWM6           | PWM7           |
+ * 0x7          | PDM_CLK        | PDM_DATA       | PDM_CLK        | PDM_DATA       | PDM_CLK        | PDM_DATA       | PDM_CLK        | PDM_DATA       |
+ * 0x8          |                |                |                |                | CLK_OUT        | RF_PA_TXEN     | RF_PA_RXEN     | CLK_OUT        |
+ * 0x9          | IrDA_IN        | IrDA_OUT       |                |                |                | IrDA_IN        | IrDA_OUT       |                |
+ * 0xA          | I2S_CK         | I2S_WS         | I2S_SD_OUT     | I2S_SD_IN      | I2S_CK         | I2S_WS         | I2S_SD_OUT     | I2S_SD_IN      |
+ * 0xB          |                |                |                |                |                |                |                |                |
+ * 0xC          |                |                |                |                |                |                |                |                |
+ * 0xD          | LCD_CS         | LCD_DC         | LCD_WR         | LCD_RD         | LCD_TE         | LCD_TE         | LCD_CS         | LCD_DC         |
+ * 0xE          |                |                |                |                |                |                |                |                |
+ * 0xF          |                |                |                |                |                |                |                |                |
+ */
+
+
+/*
+ *  PortB MUX
+ *              | PB0            | PB1            | PB2            | PB3            | PB4            | PB5            | PB6            | PB7            |
+ * -----------------------------------------------------------------------------------------------------------------------------------------------
+ * 0x0          | GPIO_B0        | GPIO_B1        | GPIO_B2        | GPIO_B3        | GPIO_B4        | GPIO_B5        | GPIO_B6        | GPIO_B7        |
+ * 0x1          | I2C0_CLK       | I2C0_DAT       | I2C1_CLK       | I2C1_DAT       | I2C0_CLK       | I2C0_DAT       | I2C1_CLK       | I2C1_DAT       |
+ * 0x2          | SPI0_M_CLK     | SPI0_M_CS      | SPI0_M_IO0     | SPI0_M_IO1     | SPI0_M_IO2     | SPI0_M_IO3     | SPI0_M_CLK     | SPI0_M_CS      |
+ * 0x3          | SPI_S_CLK      | SPI_S_CS       | SPI_S_MOSI     | SPI_S_MISO     | SPI_S_CLK      | SPI_S_CS       | SPI_S_MOSI     | SPI_S_MISO     |
+ * 0x4          | UART0_Rx       | UART0_Tx       | UART0_RTS      | UART0_CTS      | UART0_Rx       | UART0_Tx       | UART0_RTS      | UART0_CTS      |
+ * 0x5          | USB_DP         | USB_DM         | UART1_Rx       | UART1_Tx       | USB_DP         | USB_DM         | UART1_Rx       | UART1_Tx       |
+ * 0x6          | PWM0           | PWM1           | PWM2           | PWM3           | PWM4           | PWM5           | PWM6           | PWM7           |
+ * 0x7          | PDM_CLK        | PDM_DATA       | PDM_CLK        | PDM_DATA       | PDM_CLK        | PDM_DATA       | PDM_CLK        | PDM_DATA       |
+ * 0x8          |                |                |                |                | CLK_OUT        | RF_PA_TXEN     | RF_PA_RXEN     | CLK_OUT        |
+ * 0x9          | IrDA_IN        | IrDA_OUT       |                |                |                | IrDA_IN        | IrDA_OUT       |                |
+ * 0xA          |                |                |                |                | I2S_CK         | I2S_WS         | I2S_SD_OUT     | I2S_SD_IN      |
+ * 0xB          |                |                |                |                |                |                |                |                |
+ * 0xC          |                |                |                |                |                |                |                |                |
+ * 0xD          | LCD_D0         | LCD_D1         | LCD_D2         | LCD_D3         | LCD_D4         | LCD_D5         | LCD_D6         | LCD_D7         |
+ * 0xE          |                |                |                |                |                |                |                |                |
+ * 0xF          |                |                |                |                |                |                |                |                |
+ */
+
+
+/*
+ *  PortC MUX
+ *             | PC0          | PC1          | PC2          | PC3          | PC4          | PC5          | PC6          | PC7          |
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * 0x0         | GPIO_C0      | GPIO_C1      | GPIO_C2      | GPIO_C3      | GPIO_C4      | GPIO_C5      | GPIO_C6      | GPIO_C7      |
+ * 0x1         | I2C0_CLK     | I2C0_DAT     | I2C1_CLK     | I2C1_DAT     | I2C0_CLK     | I2C0_DAT     | I2C1_CLK     | I2C1_DAT     |
+ * 0x2         | SPI1_M_CLK   | SPI1_M_CS    | SPI1_M_IO0   | SPI1_M_IO1   | SPI1_M_IO2   | SPI1_M_IO3   | SPI1_M_CLK   | SPI1_M_CS    |
+ * 0x3         | SPI_S_CLK    | SPI_S_CS     | SPI_S_MOSI   | SPI_S_MISO   | SPI_S_CLK    | SPI_S_CS     | SPI_S_MOSI   | SPI_S_MISO   |
+ * 0x4         | UART0_Rx     | UART0_Tx     | UART0_RTS    | UART0_CTS    | UART0_Rx     | UART0_Tx     | UART0_RTS    | UART0_CTS    |
+ * 0x5         | LCD_CS       | LCD_DC       | UART1_Rx     | UART1_Tx     | LCD_WR       | LCD_RD       | UART1_Rx     | UART1_Tx     |
+ * 0x6         | PWM0         | PWM1         | PWM2         | PWM3         | PWM4         | PWM5         | PWM6         | PWM7         |
+ * 0x7         | PDM_CLK      | PDM_DATA     | PDM_CLK      | PDM_DATA     | PDM_CLK      | PDM_DATA     | PDM_CLK      | PDM_DATA     |
+ * 0x8         |              |              |              |              |              |              | SWCLK        | SWDIO        |
+ * 0x9         | IrDA_IN      | IrDA_OUT     |              |              |              | IrDA_IN      | IrDA_OUT     |              |
+ * 0xA         | I2S_CK       | I2S_WS       | I2S_SD_OUT   | I2S_SD_IN    | I2S_CK       | I2S_WS       | I2S_SD_OUT   | I2S_SD_IN    |
+ * 0xB         |              |              |              |              |              |              |              |              |
+ * 0xC         | QSPI0_IO3    | QSPI0_CLK    | QSPI0_CS     | QSPI0_IO1    | QSPI0_IO2    | QSPI0_IO0    |              |              |
+ * 0xD         | LCD_D8       | LCD_D9       | LCD_D10      | LCD_D11      | LCD_D12      | LCD_D13      | LCD_D14      | LCD_D15      |
+ * 0xE         |              |              |              |              |              |              |              |              |
+ * 0xF         |              |              |              |              |              |              |              |              |
+ */
+
+/*
+ *  PortD MUX
+ *             | PD0          | PD1          | PD2          | PD3          | PD4          | PD5          | PD6          | PD7          |
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * 0x0         | GPIO_D0      | GPIO_D1      | GPIO_D2      | GPIO_D3      | GPIO_D4      | GPIO_D5      | GPIO_D6      | GPIO_D7      |
+ * 0x1         | I2C0_CLK     | I2C0_DAT     | I2C1_CLK     | I2C1_DAT     | I2C0_CLK     | I2C0_DAT     | I2C1_CLK     | I2C1_DAT     |
+ * 0x2         | SPI1_M_CLK   | SPI1_M_CS    | SPI1_M_IO0   | SPI1_M_IO1   | SPI1_M_IO2   | SPI1_M_IO3   | SPI1_M_CLK   | SPI1_M_CS    |
+ * 0x3         | SPI_S_CLK    | SPI_S_CS     | SPI_S_MOSI   | SPI_S_MISO   | SPI_S_CLK    | SPI_S_CS     | SPI_S_MOSI   | SPI_S_MISO   |
+ * 0x4         | UART0_Rx     | UART0_Tx     | UART0_RTS    | UART0_CTS    | UART0_Rx     | UART0_Tx     | UART0_RTS    | UART0_CTS    |
+ * 0x5         |              |              | UART1_Rx     | UART1_Tx     |              |              | UART1_Rx     | UART1_Tx     |
+ * 0x6         | PWM0         | PWM1         | PWM2         | PWM3         | PWM4         | PWM5         | PWM6         | PWM7         |
+ * 0x7         | PDM_CLK      | PDM_DATA     | PDM_CLK      | PDM_DATA     | PDM_CLK      | PDM_DATA     | PDM_CLK      | PDM_DATA     |
+ * 0x8         | AuxADC7      | AuxADC6      | AuxADC5      | AuxADC4      | AuxADC3      | AuxADC2      | AuxADC1      | AuxADC0      |
+ * 0x9         | IrDA_IN      | IrDA_OUT     |              |              |              | IrDA_IN      | IrDA_OUT     |              |
+ * 0xA         | I2S_CK       | I2S_WS       | I2S_SD_OUT   | I2S_SD_IN    | I2S_CK       | I2S_WS       | I2S_SD_OUT   | I2S_SD_IN    |
+ * 0xB         |              |              |              |              |              |              |              |              |
+ * 0xC         |              |              |              |              |              |              |              |              |
+ * 0xD         | LCD_WR       | LCD_RD       | LCD_TE       | LCD_TE       | LCD_CS       | LCD_DC       | LCD_WR       | LCD_RD       |
+ * 0xE         |              |              |              |              |              |              |              |              |
+ * 0xF         |              |              |              |              |              |              |              |              |
+ */
+
+/*
+ *  PortE MUX
+ *             | PE0          | PE1          |
+ * ------------------------------------------
+ * 0x0         | GPIO_E0      | GPIO_E1      |
+ * 0x1         | I2C0_CLK     | I2C0_DAT     |
+ * 0x2         | SPI1_M_IO0   | SPI1_M_IO1   |
+ * 0x3         | SPI_S_CLK    | SPI_S_CS     |
+ * 0x4         | UART0_Rx     | UART0_Tx     |
+ * 0x5         | UART1_Rx     | UART1_Tx     |
+ * 0x6         | PWM0         | PWM1         |
+ * 0x7         | PDM_CLK      | PDM_DATA     |
+ * 0x8         |              |              |
+ * 0x9         |              |              |
+ * 0xA         | USB_DP       | USB_DM       |
+ * 0xB         |              |              |
+ * 0xC         |              |              |
+ * 0xD         | LCD_TE       | LCD_TE       |
+ * 0xE         |              |              |
+ * 0xF         |              |              |
+ */
+
 /** @addtogroup GPIO_Registers_Section
   * @{
   */
@@ -70,7 +182,7 @@ typedef struct
 /** @addtogroup GPIO_Initialization_Config_Section
   * @{
   */
-/* ################################ Initialization¡¢Config Section Start ################################ */
+/* ################################ Initialization/Config Section Start ################################ */
 
 /** @defgroup GPIO_pins GPIO pins
   * @{
@@ -215,7 +327,7 @@ typedef struct
                               This parameter can be a value of @ref GPIOEx_function_selection */
 }GPIO_InitTypeDef;
 
-/* ################################ Initialization¡¢Config Section END ################################## */
+/* ################################ Initialization/Config Section END ################################## */
 /**
   * @}
   */

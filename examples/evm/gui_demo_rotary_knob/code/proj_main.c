@@ -123,6 +123,7 @@ __attribute__((section("ram_code"))) void main_loop(void)
 	
     while(1)
     {
+		//printf("loop\r\n");
         if(ble_stack_schedule_allow())
         {
             /*user code should be add here*/
@@ -163,7 +164,7 @@ __attribute__((section("ram_code"))) void main_loop(void)
 void proj_init(void)
 {
 	
-    LOG_INFO(app_tag, "GUI Demo\r\n");
+    
 
     __SYSTEM_GPIO_CLK_ENABLE();
     system_regs->mdm_qspi_cfg.qspi_ref_128m_en = 1; // configure qspi reference clock to 128MHz
@@ -187,7 +188,9 @@ void proj_init(void)
     user_task_init();
     uart0_init(115200);
     simple_peripheral_init();
-		
+	char *date,*time;
+	get_SDK_compile_date_time(&date,&time); 
+	printf("\r\nsdk_version:%s %s\r\n",date,time);	
     printf(" %s size =%d\r\n",__FUNCTION__,os_get_free_heap_size());
 	
 	 	
@@ -195,8 +198,7 @@ void proj_init(void)
 		
 		
 }
-
-
+ 
 
 /*********************************************************************
  * @fn      user_main
@@ -213,7 +215,7 @@ void proj_init(void)
  
 void user_main(void)
 {
-		mac_addr_t mac_addr;
+	mac_addr_t mac_addr;
 
     /* initialize log module */
     log_init();
@@ -248,10 +250,11 @@ void user_main(void)
 												
     /* initialize ble stack */
     ble_stack_init();
+	
     system_sleep_disable();
-
-
+	
     proj_init();
+	
     /* enter main loop */
     main_loop();
 }

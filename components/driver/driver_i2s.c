@@ -370,7 +370,7 @@ void main(void)
     i2s_init(&I2S_Handle);
 
     NVIC_EnableIRQ(I2S_IRQn);
-    NVIC_SetPriority(I2S_IRQn, 0);
+    NVIC_SetPriority(I2S_IRQn, 1);
 
     i2s_enable();
 

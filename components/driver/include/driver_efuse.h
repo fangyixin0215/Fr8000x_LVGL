@@ -147,8 +147,8 @@ typedef struct
 {
     uint32_t u16_slopeA;
     uint32_t u16_slopeB;
-    int16_t  s16_constantA;
-    int16_t  s16_constantB;
+    int32_t  s16_constantA;
+    int32_t  s16_constantB;
 }struct_ADC_Cal_Param_t;
 
 /* ################################ eFuse Parameter Section END ################################## */

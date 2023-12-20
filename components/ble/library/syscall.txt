@@ -873,7 +873,6 @@
 0x0001ba01 T sch_plan_rem
 0x0001ba0d T sch_plan_req
 0x0001ba41 T sch_plan_set
-0x0001baa5 T sch_prog_end_isr
 0x0001bb2d T sch_prog_init
 0x0001bb5d T sch_prog_push
 0x0001bc89 T sch_prog_rx_isr

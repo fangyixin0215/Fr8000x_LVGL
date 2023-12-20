@@ -48,6 +48,9 @@ uint32_t rtc_GetCount(void);
 /* rtc_CountUpdate */
 void rtc_CountUpdate(uint32_t fu32_Count);
 
+/* rtc_AlarmUpdate */
+void rtc_AlarmUpdate(e_alarm_t fe_Alarm);
+
 /* rtc_ClockEnable */
 /* rtc_ClockDisable */
 void rtc_ClockEnable(void);
@@ -62,6 +65,11 @@ void rtc_ResetDisable(void);
 /* rtc_AlarmDisable */
 void rtc_AlarmEnable(e_alarm_t fe_Alarm);
 void rtc_AlarmDisable(e_alarm_t fe_Alarm);
+
+/* rtc_AlarmRead */
+/* rtc_AlarmSet */
+uint32_t rtc_AlarmRead(e_alarm_t fe_Alarm);
+void rtc_AlarmSet(e_alarm_t fe_Alarm, uint32_t fu32_ConfigValue);
 
 /* rtc_AlarmHandler */
 void rtc_AlarmHandler(void);

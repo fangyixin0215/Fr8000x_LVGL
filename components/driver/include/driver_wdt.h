@@ -33,11 +33,17 @@ enum wdt_IRQ_t
   */
 typedef struct 
 {
-    uint32_t WdtCount;      /* This parameter can be a 24-bit Size */
+    uint32_t WdtCount;         /* The watchdog initializes the count value.
+                                  An interrupt can be generated when the count value is reached.
+                                  This parameter can be a 24-bit Size.  */
 
-    uint32_t Timeout;       /* This parameter can be a 8-bit Size */
-    
-    uint32_t IRQ_Enable;    /* This parameter can be a value of @ref wdt_IRQ_t */
+    uint16_t Timeout;          /* The watchdog Timeout reset count value.
+                                  When the count value is reached, the timeout counter is starting. 
+                                  Timeout triggers the system reset.
+                                  Attention: Timeout Set to 0 the system will not reset.
+                                  This parameter can be a 8-bit Size */
+                                    
+    uint32_t IRQ_Enable;       /* This parameter can be a value of @ref wdt_IRQ_t */
 }wdt_Init_t;
 
 

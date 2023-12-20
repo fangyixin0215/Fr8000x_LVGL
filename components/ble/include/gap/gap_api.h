@@ -33,6 +33,7 @@
 #define GAP_ADV_MODE_NON_CONN_SCAN          0x04
 #define GAP_ADV_MODE_HDC_DIRECT             0x05
 #define GAP_ADV_MODE_BEACON                 0x06
+#define GAP_ADV_MODE_CUSTOM                 0x07
 
 #define GAP_ADV_MODE_EXTEND_CONN_UNDIRECT   0x11
 #define GAP_ADV_MODE_EXTEND_CONN_DIRECT     0x12
@@ -76,6 +77,14 @@
 #define GAP_PHY_2MBPS    (2)    //!< LE 2M PHY preferred for an active link2
 #define GAP_PHY_CODED    (3)    //!< LE Coded PHY preferred for an active link4
 /** @} End GAP_PHY_VALUES */
+
+/** @defgroup GAP_CODED_PHY_RATE
+ * @{
+ */
+#define GAP_PHY_CODED_RATE_ALL          0    //!< No preference for rate used when transmitting on the LE Coded PHY
+#define GAP_PHY_CODED_RATE_500K         1    //!< 500kbps rate preferred when transmitting on the LE Coded PHY
+#define GAP_PHY_CODED_RATE_125K         2    //!< 125kbps  when transmitting on the LE Coded PHY
+/** @} End GAP_CODED_PHY_RATE */
 
 /** @defgroup GAP_ADV_FILTER_MODE_DEFINES
  * @{
@@ -128,6 +137,7 @@
  */
 #define GAP_SCAN_MODE_GEN_DISC          0x00  //!< General discovery
 #define GAP_SCAN_MODE_OBSERVER          0x02  //!< Observer
+#define GAP_SCAN_MODE_SEL_OBSERVER      0x03  //!< Selective observer, only receive advertising data from whitelist
 /** @} End GAP_SCAN_MODE_DEFINES */
 
 
@@ -241,6 +251,7 @@ typedef enum
     GAP_SEC_EVT_MASTER_ENCRYPT_FAIL, //!< Link has encrytion fail as master role
     GAP_SEC_EVT_SLAVE_ENCRYPT,      //!< Link is enrypted as slave role
     GAP_SEC_EVT_PIN_CODE_REQ,       //!< Tk type of TK exchange
+    GAP_SEC_EVT_NC_REQ,             //!< Secure connect NC(Numeric Comparison) requset
 
     GAP_SEC_EVT_BOND_START,         //!< Link bond starts
     GAP_SEC_EVT_BOND_FAIL,          //!< Link bond is failed
@@ -422,6 +433,12 @@ typedef struct
     uint8_t reason;             //!< Reason of enc fail
 } gap_evt_bond_fail_t;
 
+typedef struct
+{
+    uint8_t  conidx;
+    uint32_t nc_data;
+} gap_evt_secure_connect_nc_req_t;
+
 // GAT event structure
 typedef struct
 {
@@ -457,6 +474,7 @@ typedef struct
         gap_evt_bond_fail_t             bond_fail;   //!< Connection index of encrypted link, role as slave
         uint8_t                         white_list_status;      //!< White list change status(add or remove)
         uint8_t                         tk_type;                //!< TK exchange mode, see @defgroup GAP_TK_TYPE_DEFINES
+        gap_evt_secure_connect_nc_req_t numeric_comparison_req; //!< //!< For GAP_SEC_EVT_NC_REQ Event
     } param;
 } gap_event_t;
 
@@ -514,7 +532,8 @@ typedef struct
 // Gap bond information
 typedef struct
 {
-    gap_mac_addr_t peer_addr;   //!<mac addr of bonded peer device
+    gap_mac_addr_t peer_addr;   //!<Peer mac addr used for connect
+    gap_mac_addr_t peer_idAddr;  //!<identity addr of bonded peer device
     uint8_t peer_irk[16];       //!<peer_irk
     uint8_t peer_ltk[16];       //!<peer_irk
     uint8_t bond_flag;          //!<bond flag
@@ -820,10 +839,10 @@ void gap_set_mtu(uint16_t mtu);
 /*********************************************************************
  * @fn      gap_set_wl
  *
- * @brief   Set device mac addr into white list.
+ * @brief   Set device mac addr to white list.
  *          for device with mac addr_type = 0, should call gap_set_wl() only
  *
- * @param   p_addr_set - pointer to device mac addr, which will be set into white list
+ * @param   p_addr_set - pointer to device mac addr, which will be set to white list
  *          size     - device number,rang:1~22. how many devices will be set to white list
  *
  * @return  None.
@@ -832,11 +851,11 @@ void gap_set_wl(gap_mac_addr_t *p_addr_set,uint8_t size);
 /*********************************************************************
  * @fn      gap_rmv_wl
  *
- * @brief   Delete device mac addr into white list.
+ * @brief   Delete device mac addr to white list.
  *          for device with mac addr_type = 0, should call gap_rmv_wl() only
  *
- * @param   p_addr_rmv - pointer to device mac addr, which will be delete into white list
- *          size     - device number,rang:0~22. how many devices will be delete to white list;
+ * @param   p_addr_rmv - pointer to device mac addr, which will be deleted from white list
+ *          size     - device number,rang:0~22. how many devices will be deleted from white list;
  *                     when size is 0, All devices in the white list will be deleted
  *
  * @return  None.
@@ -993,13 +1012,15 @@ void gap_conn_param_update(uint8_t conidx, uint16_t min_intv, uint16_t max_intv,
  *
  * @param   conidx             - connection handle/index of the connection.
  *
- *          tx_phy             - TX PHY mode.   //!< see @GAP_PHY_VALUES    1M/2M
+ *          tx_phy             - TX PHY mode.    //!< see @GAP_PHY_VALUES    1M/2M/Coded
  *
- *          rx_phy             - RX PHY mode.   //!< see @GAP_PHY_VALUES    1M/2M
+ *          rx_phy             - RX PHY mode.    //!< see @GAP_PHY_VALUES    1M/2M/Coded
+ * 
+ *          coded_rate         - Coded PHY rate. //!< see @GAP_CODED_PHY_RATE    125k/500k
  *
  * @return  None.
  */
-void gap_conn_phy_update(uint8_t conidx, uint8_t tx_phy, uint8_t rx_phy);
+void gap_conn_phy_update(uint8_t conidx, uint8_t tx_phy, uint8_t rx_phy, uint8_t coded_rate);
 
 
 /**********************************************************************
@@ -1179,6 +1200,19 @@ bool gap_security_get_bond_req(void);
  * @return  Bond status.
  */
 void gap_security_req(uint8_t conidx);
+
+/*********************************************************************
+ * @fn      gap_sec_nc_rsp
+ *
+ * @brief   When initiating an NC request from the peer, determine whether to accept the request.
+ *          For GAP_SEC_EVT_NC_REQ Event.
+ *
+ * @param   conidx      - connection index.
+ *          accept      - determine whether to accept the request.
+ * 
+ * @return  None.
+ */
+void gap_sec_send_nc_rsp(uint8_t conidx, bool accept);
 
 /**********************************************************************
  * @fn      gap_get_latest_conn_parameter

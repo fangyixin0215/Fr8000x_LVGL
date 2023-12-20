@@ -414,7 +414,7 @@ static void button_anti_shake_timeout_handler(void *param)
     uint32_t curr_button;
     os_event_t toggle_event;
 
-    curr_button = ool_read32(PMU_REG_PORTA_V);
+    curr_button = ool_read32(PMU_REG_PORTA_LAST_STATUS);
     curr_button &= button_io_mask;
 
     if(curr_button == curr_button_before_anti_shake)

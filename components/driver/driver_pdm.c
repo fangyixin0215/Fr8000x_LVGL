@@ -2,15 +2,15 @@
   ******************************************************************************
   * @file    driver_pdm.c
   * @author  FreqChip Firmware Team
-  * @version V1.0.0
-  * @date    2021
+  * @version V1.0.1
+  * @date    2023
   * @brief   PDM module driver.
   *          This file provides firmware functions to manage the 
   *          pulse-duration modulation (PDM) peripheral
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2023 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */
@@ -19,27 +19,26 @@
 /************************************************************************************
  * @fn      pdm_IRQHandler
  *
- * @brief   Handle PDM interrupt request.
+ * @brief   PDM interrupt request Handler.
  *
- * @param   huart: PDM handle.
+ * @param   hpdm: PDM handle.
  */
-void pdm_IRQHandler(PDM_HandleTypeDef *hpdm)
+__WEAK void pdm_IRQHandler(PDM_HandleTypeDef *hpdm)
 {
-    if (PDM->FIFO_Status.FIFO_Almost_FULL) 
+    int i;
+
+    if (__PDM_IS_FIFO_THRESHOLD_FULL()) 
     {
-        while (!PDM->FIFO_Status.FIFO_Empty) 
+        for (i = 0; i < __PDM_GET_FIFO_THRESHOLD_LEVEL(); i++)
         {
             hpdm->p_RxData[hpdm->u32_RxCount++] = PDM->DATA;
-            
-            if (hpdm->u32_RxCount >= hpdm->u32_RxSize) 
-            {
-                /* disable fifo almost full interrupt */
-                PDM->FIFO_INTE.FIFO_Almost_FULL_INT = 0;
+        }
 
-                hpdm->b_RxBusy = false;
+        hpdm->u32_RxCount = 0;
 
-                break;
-            }
+        if (hpdm->FIFOTHFullCallback != NULL)
+        {
+            hpdm->FIFOTHFullCallback(hpdm);
         }
     }
 }
@@ -54,8 +53,17 @@ void pdm_IRQHandler(PDM_HandleTypeDef *hpdm)
 void pdm_init(PDM_HandleTypeDef *hpdm)
 {
     /* Sampling Rate */
-    PDM->CONTROL.CLK_CFG = hpdm->Init.SamplingRate;
-    PDM->CONTROL.SR_Mode = 0;
+    if (hpdm->Init.SamplingRate == SAMPLING_RATE_8000)
+    {
+        PDM->CONTROL.CLK_CFG = 0;    // 1M / 125
+        PDM->CONTROL.SR_Mode = 1;
+    }
+    else
+    {
+        PDM->CONTROL.CLK_CFG = hpdm->Init.SamplingRate;
+        PDM->CONTROL.SR_Mode = 0;
+    }
+
     /* Sampling Edge */
     PDM->CONTROL.EDGE_Select = hpdm->Init.SamplingEdge;
     /* FIFO enable */
@@ -66,14 +74,17 @@ void pdm_init(PDM_HandleTypeDef *hpdm)
     PDM->CONTROL.HPF_EN = 1;
 
     /* All interrupt disable */
-    PDM->FIFO_INTE.FIFO_FULL_INT        = 0;
-    PDM->FIFO_INTE.FIFO_Almost_FULL_INT = 0;
-    PDM->FIFO_INTE.FIFO_Empty_INT       = 0;
+    PDM->FIFO_INTE.FIFO_FULL_INT           = 0;
+    PDM->FIFO_INTE.FIFO_Threshold_FULL_INT = 0;
+    PDM->FIFO_INTE.FIFO_Empty_INT          = 0;
 
     /* Direct volume adjustment */
     PDM->VolumeCTRL.VOL_Direct = 1;
-    
-    PDM_FIFO_CLEAR();
+
+    __PDM_FIFO_THRESHOLD_LEVEL(hpdm->Init.FIFO_Threshold);
+    __PDM_DMA_THRESHOLD_LEVEL(hpdm->Init.FIFO_Threshold);
+
+    __PDM_FIFO_CLEAR();
 }
 
 /*********************************************************************
@@ -81,11 +92,21 @@ void pdm_init(PDM_HandleTypeDef *hpdm)
  *
  * @brief   set the volume.
  *
- * @param   fu16_Volume : target volume
+ * @param   fu16_Volume : target volume.(This parameter can be a 12bit value)
  */
 void pdm_set_volume(uint16_t fu16_Volume)
 {
     PDM->Volume = fu16_Volume;
+}
+
+/*********************************************************************
+ * @fn      pdm_get_volume
+ *
+ * @brief   get volume.
+ */
+uint16_t pdm_get_volume(void)
+{
+    return PDM->Volume;
 }
 
 /************************************************************************************
@@ -111,7 +132,7 @@ void pdm_disable(void)
 /************************************************************************************
  * @fn      pdm_read_data
  *
- * @brief   receive an amount of data in blocking mode.
+ * @brief   read data from PDM fifo in blocking mode.
  */
 void pdm_read_data(uint16_t *fp_Data, uint32_t fu32_Size)
 {
@@ -129,23 +150,15 @@ void pdm_read_data(uint16_t *fp_Data, uint32_t fu32_Size)
 /************************************************************************************
  * @fn      pdm_read_data_IT
  *
- * @brief   receive an amount of data in interrupt mode.
+ * @brief   Cyclic read data from PDM fifo in interrupt mode.
  */
-void pdm_read_data_IT(PDM_HandleTypeDef *hpdm, uint16_t *fp_Data, uint32_t fu32_Size)
+void pdm_read_data_IT(PDM_HandleTypeDef *hpdm, uint16_t *fp_Data)
 {
-    if (hpdm->b_RxBusy)
-        return;
-
     hpdm->p_RxData    = fp_Data;
     hpdm->u32_RxCount = 0;
-    hpdm->u32_RxSize  = fu32_Size;
-    hpdm->b_RxBusy    = true;
-
-    /* FIFO almost full level */
-    PDM_FIFO_ALMOST_LEVEL(20);
 
     /* enable fifo almost full interrupt */
-    PDM->FIFO_INTE.FIFO_Almost_FULL_INT = 1;
+    __PDM_FIFO_THRESHOLD_FULL_INT_ENABLE();
 }
 
 /************************************************************************************
@@ -156,59 +169,4 @@ void pdm_read_data_IT(PDM_HandleTypeDef *hpdm, uint16_t *fp_Data, uint32_t fu32_
 void pdm_read_data_DMA(void)
 {
     PDM->DMA_CFG.DMA_EN = 1;
-
-    PDM_DMA_ALMOST_LEVEL(20);
 }
-
-/*
-    for example:
-    
-GPIO_InitTypeDef   GPIO_Handle;
-DMA_HandleTypeDef  DMA_Chan0;
-PDM_HandleTypeDef  PDM_Handle;
-
-uint16_t Buffer[512];
-
-void main(void)
-{
-    GPIO_Handle.Pin       = GPIO_PIN_2 | GPIO_PIN_3;
-    GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_7;
-    gpio_init(GPIO_A, &GPIO_Handle);
-
-    __SYSTEM_PDM_CLK_ENABLE();
-    __SYSTEM_DMA_CLK_ENABLE();
-    
-    PDM_Handle.Init.SamplingEdge = SAMPLING_RISING_EDGE;
-    PDM_Handle.Init.SamplingRate = SAMPLING_RATE_16000;
-    pdm_init(&PDM_Handle);
-
-    NVIC_EnableIRQ(PDM_IRQn);
-
-    pdm_enable();
-    
-    // use interrupt
-    pdm_read_data_IT(&PDM_Handle, Buffer, 512);
-    while(PDM_Handle.b_RxBusy);
-    
-    // use DMA
-    __DMA_REQ_ID_PDM(1);
-    
-    DMA_Chan0.Channel               = DMA_Channel0;
-    DMA_Chan0.Init.Data_Flow        = DMA_P2M_DMAC;
-    DMA_Chan0.Init.Request_ID       = 1;
-    DMA_Chan0.Init.Source_Inc       = DMA_ADDR_INC_NO_CHANGE;
-    DMA_Chan0.Init.Desination_Inc   = DMA_ADDR_INC_INC;
-    DMA_Chan0.Init.Source_Width     = DMA_TRANSFER_WIDTH_16;
-    DMA_Chan0.Init.Desination_Width = DMA_TRANSFER_WIDTH_16;
-    dma_init(&DMA_Chan0);
-
-    pdm_read_data_DMA();
-
-    dma_start(&DMA_Chan0, (uint32_t)&PDM->DATA , (uint32_t)Buffer, 256, DMA_BURST_LEN_16, DMA_BURST_LEN_16);
-    while(!dma_get_tfr_Status(DMA_Channel0));
-    dma_clear_tfr_Status(DMA_Channel0);
-}
-
-*/

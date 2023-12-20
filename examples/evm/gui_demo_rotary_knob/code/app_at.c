@@ -34,44 +34,44 @@ void uart_isr_int(UART_HandleTypeDef *huart)
 void uart0_init(uint32_t baudrate)
 {
  
-		__SYSTEM_UART0_CLK_SELECT_96M();
-		__SYSTEM_UART0_CLK_ENABLE();
-		system_set_port_pull(GPIO_PA0,GPIO_PULL_UP,true);
-    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_0, PORTA0_FUNC_UART0_RXD);
-    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_1, PORTA1_FUNC_UART0_TXD);
-		Uart0_handle.UARTx = Uart0;
-    Uart0_handle.Init.BaudRate   = baudrate;
-    Uart0_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
-    Uart0_handle.Init.StopBits   = UART_STOPBITS_1 ;
-    Uart0_handle.Init.Parity     = UART_PARITY_NONE;
-    Uart0_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
-		uart_init_ex(&Uart0_handle);
-		NVIC_SetPriority(UART0_IRQn, 5);
-		NVIC_EnableIRQ(UART0_IRQn);
-		/*enable recv and line status interrupt*/
-		uart_isr_int(&Uart0_handle);
+	__SYSTEM_UART0_CLK_SELECT_96M();
+	__SYSTEM_UART0_CLK_ENABLE();
+	system_set_port_pull(GPIO_PA0,GPIO_PULL_UP,true);
+	system_set_port_mux(GPIO_PORT_A, GPIO_BIT_0, PORTA0_FUNC_UART0_RXD);
+	system_set_port_mux(GPIO_PORT_A, GPIO_BIT_1, PORTA1_FUNC_UART0_TXD);
+	Uart0_handle.UARTx = Uart0;
+	Uart0_handle.Init.BaudRate   = baudrate;
+	Uart0_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
+	Uart0_handle.Init.StopBits   = UART_STOPBITS_1 ;
+	Uart0_handle.Init.Parity     = UART_PARITY_NONE;
+	Uart0_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
+	uart_init_ex(&Uart0_handle);
+	NVIC_SetPriority(UART0_IRQn, 5);
+	NVIC_EnableIRQ(UART0_IRQn);
+	/*enable recv and line status interrupt*/
+	uart_isr_int(&Uart0_handle);
 }
 
 void uart1_init(uint32_t baudrate)
 {	
-		__SYSTEM_UART1_CLK_ENABLE();
-		system_set_port_pull(GPIO_PA2,GPIO_PULL_UP,true);
-    /* set PA2 and PA3 for AT command interface */
-    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_2, PORTA2_FUNC_UART1_RXD);
-    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_3, PORTA3_FUNC_UART1_TXD);
-    Uart1_handle.UARTx = Uart1;
-    Uart1_handle.Init.BaudRate   = baudrate;
-    Uart1_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
-    Uart1_handle.Init.StopBits   = UART_STOPBITS_1;
-    Uart1_handle.Init.Parity     = UART_PARITY_NONE;
-    Uart1_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
+	__SYSTEM_UART1_CLK_ENABLE();
+	system_set_port_pull(GPIO_PA2,GPIO_PULL_UP,true);
+	/* set PA2 and PA3 for AT command interface */
+	system_set_port_mux(GPIO_PORT_A, GPIO_BIT_2, PORTA2_FUNC_UART1_RXD);
+	system_set_port_mux(GPIO_PORT_A, GPIO_BIT_3, PORTA3_FUNC_UART1_TXD);
+	Uart1_handle.UARTx = Uart1;
+	Uart1_handle.Init.BaudRate   = baudrate;
+	Uart1_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
+	Uart1_handle.Init.StopBits   = UART_STOPBITS_1;
+	Uart1_handle.Init.Parity     = UART_PARITY_NONE;
+	Uart1_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
 
-    uart_init_ex(&Uart1_handle);
-	
-		NVIC_EnableIRQ(UART1_IRQn);
-    NVIC_SetPriority(UART1_IRQn, 5);
-		/*enable recv and line status interrupt*/
-		uart_isr_int(&Uart1_handle);
+	uart_init_ex(&Uart1_handle);
+
+	NVIC_EnableIRQ(UART1_IRQn);
+	NVIC_SetPriority(UART1_IRQn, 5);
+	/*enable recv and line status interrupt*/
+	uart_isr_int(&Uart1_handle);
 
 }
 
@@ -269,7 +269,7 @@ static void app_at_recv_cmd_A(uint8_t sub_cmd, uint8_t *data)
             }
             break;
         case 'V':
-            co_printf("%d\r\n", ke_get_mem_usage(3));
+            //co_printf("%d\r\n", ke_get_mem_usage(3));
             break;
     }
 }

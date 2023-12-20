@@ -396,7 +396,7 @@ void main(void)
     spi_slave_init(&SPIS_Handle);
 
     NVIC_EnableIRQ(SPIS_IRQn);
-    NVIC_SetPriority(SPIS_IRQn, 0);
+    NVIC_SetPriority(SPIS_IRQn, 1);
 
     for (i = 0; i < 256; i++)
     {

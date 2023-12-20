@@ -16,8 +16,8 @@
 #include "gif_decoder.h"
 #include "user_knob_config.h"
 
-#define TOUCHPAD_ENABLED						0
-#define LV_TICK_COUNT               5
+#define TOUCHPAD_ENABLED		0
+#define LV_TICK_COUNT           5
 
 static os_timer_t lv_schedule_timer;
  
@@ -83,9 +83,10 @@ static void my_touchpad_read(struct _lv_indev_drv_t * indev, lv_indev_data_t * d
 		
 }
 
+ 
 __attribute__((section("ram_code"))) void timer0_isr(void)
 {
-    
+	
 #ifdef DISPLAY_TYPE_ST77903
 		g_update_timeout_cnt++;
 		if((ST77903_PSRAM_BUFF!=NULL) && get_st77903_send_state() && (g_update_flag == true)) 
@@ -103,12 +104,14 @@ __attribute__((section("ram_code"))) void timer0_isr(void)
 #endif
 		timer_int_clear(Timer0);
 		lv_tick_inc(LV_TICK_COUNT);
+ 
 }
 
  
 
 static void lv_schedule_timer_handler(void *arg)
 {
+	
     lv_timer_handler();
 }
 
@@ -224,9 +227,9 @@ void gui_main(void)
 	indev_drv1.type = LV_INDEV_TYPE_KEYPAD;
 	indev_drv1.read_cb = keypad_read;
 	g_indev_keypad = lv_indev_drv_register(&indev_drv1);
-	knob_gui_init();
+ 	knob_gui_init();
 
-	display_init();
+ 	display_init();
 	__SYSTEM_TIMER_CLK_ENABLE();
 	timer_init(Timer0, system_get_clock_config()*1000*LV_TICK_COUNT, TIMER_DIV_NONE);
 	timer_start(Timer0);
