@@ -141,7 +141,7 @@
 //  <i> Internal Flash capacity selection, Default: 4Mb
 //  <0x00080000=> 4Mb
 //  <0x00040000=> 2Mb
-#define FLASH_CAPACITY          0x00080000
+#define FLASH_CAPACITY          0x000800000
 
 #if FLASH_CAPACITY == 0x00080000
     #define BLE_STACK_KEY_STORAGE_OFFSET    0x7D000
@@ -151,6 +151,10 @@
     #define BLE_STACK_KEY_STORAGE_OFFSET    0x3F000
     #define BLE_BONDING_INFO_SAVE_ADDR      0x3D000
     #define BLE_REMOTE_SERVICE_SAVE_ADDR    0x3E000
+#elif FLASH_CAPACITY == 0x00800000
+    #define BLE_STACK_KEY_STORAGE_OFFSET    0x7D000
+    #define BLE_BONDING_INFO_SAVE_ADDR      0x7C000
+    #define BLE_REMOTE_SERVICE_SAVE_ADDR    0x7B000
 #else
     #error "flash capacity configuration error!"
 #endif	//FOR_2M_FLASH
