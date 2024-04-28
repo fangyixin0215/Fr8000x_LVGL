@@ -25,11 +25,12 @@ static os_timer_t lv_schedule_timer;
 static lv_disp_draw_buf_t disp_buf;
 
 static lv_disp_drv_t *last_disp = NULL;
-
+#ifdef DISPLAY_TYPE_ST77903
 static bool g_update_flag=0;
 static uint16_t *ST77903_PSRAM_BUFF =NULL;
 static uint16_t g_update_timeout_cnt=0;
 static uint8_t g_gif_show_flag=0;
+#endif
 // this function is called in DMA interrupt
 static void my_disp_flush_done(void)
 {
@@ -161,14 +162,14 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
             act_key = LV_KEY_ENTER;
             break;
         }
-				if(DBLCLICK_CODE == act_key)
-				{		 
-					 data->state = LV_INDEV_STATE_REL;
-					 last_key = act_key;
-           g_key_code = 0;
-					 knob_return_home_page();
-				   return;
-				}
+		if(DBLCLICK_CODE == act_key)
+		{		 
+			 data->state = LV_INDEV_STATE_REL;
+			 last_key = act_key;
+			 g_key_code = 0;
+			 knob_return_home_page();
+		   return;
+		}
         last_key = act_key;
         g_key_code = 0;
     //    printf("%d keydown \n",last_key);
@@ -235,13 +236,13 @@ void gui_main(void)
 	timer_start(Timer0);
 	NVIC_SetPriority(TIMER0_IRQn, 5);
 	NVIC_EnableIRQ(TIMER0_IRQn);
+	#ifdef DISPLAY_TYPE_ST77903
 	g_gif_show_flag=1;
 	start_gif_decoder_init();
+	#endif
 	os_timer_init(&lv_schedule_timer, lv_schedule_timer_handler, NULL);
 	os_timer_start(&lv_schedule_timer, 10, true);
 		
- 
-
     //lv_demo_widgets();
     //lv_demo_benchmark();
     //lv_ex_calendar_1();

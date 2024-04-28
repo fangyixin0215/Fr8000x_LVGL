@@ -1342,6 +1342,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\driver\components\display\driver_gc9a01.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_st7365.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_st7365.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

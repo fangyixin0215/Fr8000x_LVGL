@@ -15,6 +15,39 @@ extern "C"
 //#define DISPLAY_TYPE_GC9C01
 //#define DISPLAY_TYPE_JD9854
 #define DISPLAY_TYPE_ST77903
+//#define DISPLAY_TYPE_ST7365
+
+/*根据不同屏幕开启相关的宏，注意改了这里需要将lv_conf.h里面的屏幕分辨率LV_HOR_RES_MAX，LV_VER_RES_MAX改成自己驱动芯片所对应的。*/
+#ifdef DISPLAY_TYPE_ST77903
+#include "driver_st77903.h"
+#endif
+
+#ifdef DISPLAY_TYPE_GC9A01
+#include "driver_gc9c01.h"
+#endif
+
+#ifdef DISPLAY_TYPE_JD9854
+#include "driver_jd9854.h"
+#endif
+
+#ifdef DISPLAY_TYPE_ST7796S
+#include "driver_st7796s.h"
+#endif
+
+#ifdef DISPLAY_TYPE_ST7789V
+#include "driver_st7789v.h"
+#endif
+
+#ifdef DISPLAY_TYPE_NV3041A
+#include "driver_nv3041a.h"
+#endif
+
+#ifdef DISPLAY_TYPE_ST7365
+#include "driver_st7365.h"
+#endif
+ 
+
+
 //*****************************************************************************
 //
 // External function definitions
