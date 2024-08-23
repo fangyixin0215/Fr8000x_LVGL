@@ -756,7 +756,7 @@ void gif_display_defer(uint16_t x_s, uint16_t x_e, uint16_t y_s, uint16_t y_e, u
 }
 ATTRIBUTE_GIF_MEM void start_gif_decoder_handler(void)
 {
-	if(get_st77903_send_state()&&disp_buff!=NULL)
+	if(get_st77903_send_state()&&(disp_buff!=NULL))
 	{
 		 st77903_display((uint16_t *)disp_buff,0);
 	}

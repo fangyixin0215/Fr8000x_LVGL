@@ -9,7 +9,7 @@
 /* clang-format off */
 
 #include <stdint.h>
-
+#include <stdbool.h>
 /* Handle special Kconfig options */
 #ifndef LV_KCONFIG_IGNORE
 #  include "lv_conf_kconfig.h"

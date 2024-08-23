@@ -375,10 +375,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--preinclude app_config.h --locale=english</MiscControls>
+              <MiscControls>--preinclude app_config.h --locale=english --diag_suppress=188 --diag_suppress=1</MiscControls>
               <Define>LV_BUILD_TEST=1,LV_LVGL_H_INCLUDE_SIMPLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\components\ble\include;..\..\..\..\components\driver\include;..\..\..\..\components\ble\include\gap;..\..\..\..\components\ble\include\gatt;..\..\..\..\components\ble\profiles\ble_simple_profile;..\..\..\..\components\modules\os\include;..\..\..\..\components\modules\sys\include;..\..\..\..\components\modules\platform\include;..\..\..\..\components\modules\platform\include\cmsis;..\..\..\..\components\modules\common\include;..\..\..\..\components\modules\lowpow\include;..\..\..\..\components\modules\button;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl_example;..\..\..\..\components\driver\drv_common;..\..\..\..\components\driver\components\display;..\..\..\..\components\driver\components\touchpad;..\code;..\code\scroll_menu;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl\src\misc;..\code\window;..\code\language;..\code\Jlink_RTT;..\code\button_driver;..\code\picture;..\..\..\..\components\ble\profiles\ble_ota;..\code\menu;..\code\user_app;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl\src\core</IncludePath>
+              <IncludePath>..\..\..\..\components\ble\include;..\..\..\..\components\driver\include;..\..\..\..\components\ble\include\gap;..\..\..\..\components\ble\include\gatt;..\..\..\..\components\ble\profiles\ble_simple_profile;..\..\..\..\components\modules\os\include;..\..\..\..\components\modules\sys\include;..\..\..\..\components\modules\platform\include;..\..\..\..\components\modules\platform\include\cmsis;..\..\..\..\components\modules\common\include;..\..\..\..\components\modules\lowpow\include;..\..\..\..\components\modules\button;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl_example;..\..\..\..\components\driver\drv_common;..\..\..\..\components\driver\components\display;..\..\..\..\components\driver\components\touchpad;..\code;..\code\scroll_menu;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl\src\misc;..\code\window;..\code\language;..\code\Jlink_RTT;..\code\button_driver;..\code\picture;..\..\..\..\components\ble\profiles\ble_ota;..\code\user_app;..\..\..\..\components\modules\gui\lvgl_8_1\lvgl\src\core</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1346,6 +1346,11 @@
               <FileName>driver_st7365.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\driver\components\display\driver_st7365.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_nv3030b.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\driver\components\display\driver_nv3030b.c</FilePath>
             </File>
           </Files>
         </Group>

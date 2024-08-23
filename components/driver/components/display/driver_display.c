@@ -47,6 +47,10 @@ void display_init(void)
 #ifdef DISPLAY_TYPE_ST7365
     st7365_init();
 #endif
+
+#ifdef DISPLAY_TYPE_NV3030B
+    nv3030b_init();
+#endif
 }
 
 void display_set_window(uint16_t x_s, uint16_t x_e, uint16_t y_s, uint16_t y_e)
@@ -75,6 +79,9 @@ void display_set_window(uint16_t x_s, uint16_t x_e, uint16_t y_s, uint16_t y_e)
 
 #ifdef DISPLAY_TYPE_ST7365
     st7365_set_window(x_s, x_e, y_s, y_e);
+#endif	
+#ifdef DISPLAY_TYPE_NV3030B
+    nv3030b_set_window(x_s, x_e, y_s, y_e);
 #endif	
 }
 
@@ -106,6 +113,10 @@ void display_wait_transfer_done(void)
 #ifdef DISPLAY_TYPE_ST7365
     st7365_display_wait_transfer_done();
 #endif	
+
+#ifdef DISPLAY_TYPE_NV3030B
+    nv3030b_display_wait_transfer_done();
+#endif	
 }
 
 void display_update(uint32_t pixel_count, uint16_t *data, void(*callback)(void))
@@ -133,6 +144,10 @@ void display_update(uint32_t pixel_count, uint16_t *data, void(*callback)(void))
 #ifdef DISPLAY_TYPE_ST7365
     st7365_display(pixel_count, data, callback);
 #endif		
+
+#ifdef DISPLAY_TYPE_NV3030B
+    nv3030b_display(pixel_count, data, callback);
+#endif	
 }
 
 void display_gather_update(uint32_t pixel_count, uint16_t *data, uint16_t interval, uint16_t count, void(*callback)(void))
@@ -173,5 +188,8 @@ __attribute__((section("ram_code"))) void dma_isr(void)
 
 #ifdef DISPLAY_TYPE_ST7365
    st7365_dma_isr();
+#endif	
+#ifdef DISPLAY_TYPE_NV3030B
+   nv3030b_dma_isr();
 #endif	
 }

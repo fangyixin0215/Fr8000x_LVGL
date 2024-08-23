@@ -16,6 +16,7 @@ extern "C"
 //#define DISPLAY_TYPE_JD9854
 #define DISPLAY_TYPE_ST77903
 //#define DISPLAY_TYPE_ST7365
+//#define DISPLAY_TYPE_NV3030B
 
 /*根据不同屏幕开启相关的宏，注意改了这里需要将lv_conf.h里面的屏幕分辨率LV_HOR_RES_MAX，LV_VER_RES_MAX改成自己驱动芯片所对应的。*/
 #ifdef DISPLAY_TYPE_ST77903
@@ -46,7 +47,9 @@ extern "C"
 #include "driver_st7365.h"
 #endif
  
-
+#ifdef DISPLAY_TYPE_NV3030B
+#include "driver_nv3030b.h"
+#endif
 
 //*****************************************************************************
 //
