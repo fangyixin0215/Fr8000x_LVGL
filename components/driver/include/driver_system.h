@@ -799,6 +799,10 @@ void system_set_port_mux(uint8_t port, uint8_t bit, uint8_t func);
 
 /* Exported macro ------------------------------------------------------------*/
 
+/* internal flash clock select */
+#define __SYSTEM_QSPI_CLK_SELECT_48M()                  (system_regs->mdm_qspi_cfg.qspi_ref_clk_sel = 0)
+#define __SYSTEM_QSPI_CLK_SELECT_96M()                  (system_regs->mdm_qspi_cfg.qspi_ref_clk_sel = 1)
+
 /* peripheral clock select */
 #define __SYSTEM_IF8080_CLK_SELECT_48M()                (system_regs->clk_cfg.lcd_para_sclk_sel = 0)
 #define __SYSTEM_IF8080_CLK_SELECT_96M()                (system_regs->clk_cfg.lcd_para_sclk_sel = 1)

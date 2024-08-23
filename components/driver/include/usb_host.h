@@ -3,17 +3,17 @@
   * @file    usb_host.h
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   Header file for usb_host.c file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */
-#ifndef __USB_DEV_H__
-#define __USB_DEV_H__
+#ifndef __USB_HOST_H__
+#define __USB_HOST_H__
 
 #include "stdint.h"
 #include "stdbool.h"

@@ -3,12 +3,12 @@
   * @file    usb_dev.c
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   This file provides all the USBD device functions.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */

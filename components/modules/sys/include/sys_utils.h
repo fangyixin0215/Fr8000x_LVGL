@@ -83,6 +83,12 @@ sys_baseband_time_t system_get_baseband_time(void);
  */
 void system_get_spare_exmem(uint32_t *base, uint32_t *length);
 
+float Smoothing_Filter_handle(uint8_t filter_id,float input);
+void Smoothing_Filter_reset(uint8_t filter_id);
+void Smoothing_Filter_destroy(uint8_t filter_id);
+void Smoothing_Filter_init(uint8_t * filter_id);
+
+
 #endif  //_SYS_UTILS_H
 
 

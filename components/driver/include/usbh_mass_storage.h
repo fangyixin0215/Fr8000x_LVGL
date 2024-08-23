@@ -3,12 +3,12 @@
   * @file    usbh_mass_storage.h
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   Header file for usbh_mass_storage.c file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */
@@ -274,5 +274,8 @@ int32_t usbh_msu_read_block(uint32_t LogicalBlockAddress, uint16_t TransferBlock
 
 /* usbh_msu_get_busy_status */
 int32_t usbh_msu_get_busy_status(void);
+
+/* usbh_msu_test_unit_ready */
+int32_t usbh_msu_test_unit_ready(void);
 
 #endif

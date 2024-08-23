@@ -405,7 +405,7 @@ void pmu_disable_isr(uint16_t isr_map)
     ool_pd_write16(PMU_REG_PD_INT_EN, ool_pd_read16(PMU_REG_PD_INT_EN) & (~isr_map));
 }
 
-uint16_t pmu_get_isr_state(void)
+__attribute__((section("ram_code"))) uint16_t pmu_get_isr_state(void)
 {
     return ool_pd_read16(PMU_REG_PD_INT_STATUS);
 }

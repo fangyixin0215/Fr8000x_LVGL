@@ -37,7 +37,7 @@
 #include "ble_simple_peripheral.h"
 #include "simple_gatt_service.h"
 #include "co_log.h"
-#include "dma_refresh_lvgl.h"
+ 
 
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
@@ -46,7 +46,7 @@ const char *app_tag = "project";
 #define SYSTEM_STACK_SIZE           0x800
 
 extern void gui_main(void);
-
+void patch_init(void);
 
 /*
  * LOCAL VARIABLES
@@ -182,7 +182,7 @@ void proj_init(void)
     system_set_port_mux(GPIO_PORT_C, GPIO_BIT_5, PORTC5_FUNC_QSPI0_IO0);
     psram_init();
 	
-	  //lv_gpu_stm32_dma2d_init();
+	  
     
     // User task initialization, for buttons.
     user_task_init();
@@ -223,7 +223,7 @@ void user_main(void)
     /* initialize PMU module at the beginning of this program */
     pmu_sub_init();
     pmu_ioldosw_ctrl(true);
-
+	patch_init();
     /* enable gpio clock */
     __SYSTEM_GPIO_CLK_ENABLE();
     /* set system clock */

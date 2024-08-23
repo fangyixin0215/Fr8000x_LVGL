@@ -3,12 +3,12 @@
   * @file    usb_audio.h
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   Header file for usb_audio.c file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */
@@ -21,6 +21,8 @@
 
 #include "usb_core.h"
 #include "usb_dev.h"
+
+#define USB_AUDIO_VOLUME_MAX    (0xAF)
 
 #define USB_AUDIO_DATA_WIDTH_16BIT    (16)
 #define USB_AUDIO_DATA_WIDTH_24BIT    (24)
@@ -98,5 +100,11 @@ uint32_t usb_Audio_get_Speaker_Packet_Length(void);
 uint32_t usb_Audio_get_Speaker_Bit_Width(void);
 uint32_t usb_Audio_get_Mic_Packet_Length(void);
 uint32_t usb_Audio_get_Mic_Bit_Width(void);
+uint32_t usb_Audio_get_Speaker_Mute_status(void);
+uint32_t usb_Audio_get_Mic_Mute_status(void);
+uint32_t usb_Audio_get_Speaker_Volume(void);
+uint32_t usb_Audio_get_Mic_Volume(void);
+uint32_t usb_Audio_get_Speaker_SamplingFreq(void);
+uint32_t usb_Audio_get_Mic_SamplingFreq(void);
 
 #endif

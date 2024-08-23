@@ -3,12 +3,12 @@
   * @file    usb_dev.h
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   Header file for usb_dev.c file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */

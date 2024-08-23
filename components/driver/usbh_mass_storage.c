@@ -3,13 +3,13 @@
   * @file    usbh_mass_storage.c
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2023
+  * @date    2024
   * @brief   This file provides the high layer firmware functions to manage the 
   *          Host Mass Storage Device.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   * 
   ******************************************************************************

@@ -3,12 +3,12 @@
   * @file    usb_mass_storage.h
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   Header file for usb_mass_storage.c file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */

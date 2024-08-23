@@ -2,13 +2,13 @@
   ******************************************************************************
   * @file    usb_core.c
   * @author  FreqChip Firmware Team
-  * @version V1.1.0
-  * @date    2021
+  * @version V1.0.0
+  * @date    2024
   * @brief   This file provides all the USBD core functions.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   ******************************************************************************
 */
@@ -35,7 +35,8 @@ void usb_device_init(void)
     /* OTG_VBUSLO_I   = 1 */
     /* OTG_CID_I      = 1 */
     /* USB_STDBY_SEL  = 1 */
-    *(volatile uint32_t *)0x5000003C = 0x000C4F09;
+    *(volatile uint32_t *)0x5000003C = 0x000C4F09;    // 0x000C5F09: use gpio replace USB_PHY
+                                                      // 0x000C4F09: use USB_PHY
 
     /* Disable USB all Interrupt except endpoint0 and Bus reset*/
     USB->IntrUSBE = 0x04;    /* Enable Bus reset INT */

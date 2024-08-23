@@ -3,13 +3,13 @@
   * @file    usb_audio.c
   * @author  FreqChip Firmware Team
   * @version V1.0.0
-  * @date    2021
+  * @date    2024
   * @brief   This file provides the high layer firmware functions to manage the 
   *          USB Audio Device.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 FreqChip.
+  * Copyright (c) 2024 FreqChip.
   * All rights reserved.
   * 
   ******************************************************************************
@@ -26,8 +26,8 @@ uint32_t gu32_PacketLengthMic;
 uint32_t gu32_SamplingFreqSpeaker;
 uint32_t gu32_SamplingFreqMic;
 
-uint16_t gu16_VolumeSpeaker = 0xAF;
-uint16_t gu16_VolumeMic     = 0xAF;
+uint16_t gu16_VolumeSpeaker = USB_AUDIO_VOLUME_MAX;
+uint16_t gu16_VolumeMic     = USB_AUDIO_VOLUME_MAX;
 uint8_t  gu8_MuteSpeaker    = 0x00;
 uint8_t  gu8_MuteMic        = 0x00;
 
@@ -595,8 +595,15 @@ static void usb_Audio_ClassRequest_Handler(usb_StandardRequest_t* pStandardReque
             {
                 if (pStandardRequest->wValue[1] == MUTE_CONTROL) 
                 {
-                    gu8_Respond[0] = 0x00;
-                    
+                    if (pStandardRequest->wIndex[1] == 0x02) 
+                    {
+                        gu8_Respond[0] = gu8_MuteSpeaker;
+                    }
+                    else if (pStandardRequest->wIndex[1] == 0x05) 
+                    {
+                        gu8_Respond[0] = gu8_MuteMic;
+                    }
+
                     pReturnData->DataBuffer = gu8_Respond;
                     pReturnData->DataLength = 1;
                 }
@@ -634,7 +641,7 @@ static void usb_Audio_ClassRequest_Handler(usb_StandardRequest_t* pStandardReque
             {
                 if (pStandardRequest->wValue[1] == VOLUME_CONTROL) 
                 {
-                    gu8_Respond[0] = 0xAF;
+                    gu8_Respond[0] = USB_AUDIO_VOLUME_MAX;
                     gu8_Respond[1] = 0x00;
                      
                     pReturnData->DataBuffer = gu8_Respond;
@@ -777,7 +784,7 @@ void usb_Audio_Endpoints_Handler(uint8_t RxStatus, uint8_t TxStatus)
             {
                 case USB_AUDIO_DATA_WIDTH_16BIT:
                 {
-                    lu32_RxCount = usb_Endpoints_get_RxCount();
+                    lu32_RxCount = usb_Endpoints_get_RxCount_16bit();
                     usb_read_fifo(ENDPOINT_2, (uint8_t *)&Speaker_Buffer[gu32_PacketLengthSpeaker * Speaker_Packet], lu32_RxCount); 
                     usb_Endpoints_FlushRxFIFO();
 
@@ -898,6 +905,30 @@ uint32_t usb_Audio_get_Speaker_Bit_Width(void)
 uint32_t usb_Audio_get_Mic_Bit_Width(void)
 {
     return gu32_BitWidthMic;
+}
+uint32_t usb_Audio_get_Speaker_Mute_status(void)
+{
+    return gu8_MuteSpeaker;
+}
+uint32_t usb_Audio_get_Mic_Mute_status(void)
+{
+    return gu8_MuteMic;
+}
+uint32_t usb_Audio_get_Speaker_Volume(void)
+{
+    return gu16_VolumeSpeaker;
+}
+uint32_t usb_Audio_get_Mic_Volume(void)
+{
+    return gu16_VolumeMic;
+}
+uint32_t usb_Audio_get_Speaker_SamplingFreq(void)
+{
+    return gu32_SamplingFreqSpeaker;
+}
+uint32_t usb_Audio_get_Mic_SamplingFreq(void)
+{
+    return gu32_SamplingFreqMic;
 }
 
 /*********************************************************************
