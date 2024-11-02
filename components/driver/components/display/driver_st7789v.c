@@ -16,8 +16,8 @@ Creation Date：2023/05/11
 #include "sys_utils.h"
 
 #define ST7789_240X280		0
-#define ST7789_135X240		1
-
+#define ST7789_135X240		0
+#define ST7789_240X320		1
 #define DEVELOP_FR8008GP_BOARD 1
 
 #ifdef DEVELOP_FR8008GP_BOARD
@@ -51,6 +51,21 @@ Creation Date：2023/05/11
 #define LCD_DISABLE_BACKLIGHT()     gpio_write_pin(GPIO_E, GPIO_PIN_1, GPIO_PIN_CLEAR)
 #define LCD_W 240
 #define LCD_H 280
+#elif (ST7789_240X320==1)
+#define LCD_RELEASE_CS()            gpio_write_pin(GPIO_A, GPIO_PIN_7, GPIO_PIN_SET)
+#define LCD_SET_CS()                gpio_write_pin(GPIO_A, GPIO_PIN_7, GPIO_PIN_CLEAR)
+
+#define LCD_RELEASE_DC()            gpio_write_pin(GPIO_A, GPIO_PIN_3, GPIO_PIN_SET)
+#define LCD_SET_DC()                gpio_write_pin(GPIO_A, GPIO_PIN_3, GPIO_PIN_CLEAR)
+
+#define LCD_RELEASE_RESET()         gpio_write_pin(GPIO_A, GPIO_PIN_4, GPIO_PIN_SET)
+#define LCD_SET_RESET()             gpio_write_pin(GPIO_A, GPIO_PIN_4, GPIO_PIN_CLEAR)
+
+#define LCD_ENABLE_BACKLIGHT()      gpio_write_pin(GPIO_B, GPIO_PIN_4, GPIO_PIN_SET)
+#define LCD_DISABLE_BACKLIGHT()     gpio_write_pin(GPIO_B, GPIO_PIN_4, GPIO_PIN_CLEAR)
+#define LCD_W 240
+#define LCD_H 320
+
 #endif
 
 #endif
@@ -134,9 +149,26 @@ static void st7789v_init_io(void)
     GPIO_Handle.Pull      = GPIO_PULLDOWN;//GPIO_PULLDOWN;   GPIO_PULLUP
     GPIO_Handle.Alternate = GPIO_FUNCTION_2;
     gpio_init(GPIO_B, &GPIO_Handle);
+	#elif (ST7789_240X320==1)
+	 // reset  DC   CS 
+    GPIO_Handle.Pin       = GPIO_PIN_4|GPIO_PIN_3|GPIO_PIN_7;
+    GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
+    gpio_init(GPIO_A, &GPIO_Handle);
+	
+ 	 //Backlight
+    GPIO_Handle.Pin       = GPIO_PIN_4;
+    GPIO_Handle.Mode      = GPIO_MODE_OUTPUT_PP;
+    gpio_init(GPIO_B, &GPIO_Handle);   
+
+    GPIO_Handle.Pin       = GPIO_PIN_2|GPIO_PIN_6;
+    GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
+    GPIO_Handle.Pull      = GPIO_PULLDOWN;//GPIO_PULLDOWN;   GPIO_PULLUP
+    GPIO_Handle.Alternate = GPIO_FUNCTION_2;
+    gpio_init(GPIO_A, &GPIO_Handle);
 	#endif
 	
 #endif
+	
     LCD_RELEASE_CS();
     LCD_ENABLE_BACKLIGHT();
 //		LCD_DISABLE_BACKLIGHT();
@@ -447,7 +479,97 @@ st7789v_write_data(0x01);
 st7789v_write_data(0x2B);   
 
 
-st7789v_write_cmd(0x2C);     
+st7789v_write_cmd(0x2C);    
+#endif
+
+#if (ST7789_240X320==1)
+st7789v_write_cmd(0x11);     //Sleep out
+
+	co_delay_100us(1200);                //Delayms 120ms
+
+	st7789v_write_cmd(0x36);     
+	st7789v_write_data(0xa0);   
+
+	st7789v_write_cmd(0x21);     
+
+	st7789v_write_cmd(0xB2);     
+	st7789v_write_data(0x05);   
+	st7789v_write_data(0x05);   
+	st7789v_write_data(0x00);   
+	st7789v_write_data(0x33);   
+	st7789v_write_data(0x33);   
+
+	st7789v_write_cmd(0xB7);     
+	st7789v_write_data(0x75);   
+
+	st7789v_write_cmd(0xBB);     
+	st7789v_write_data(0x22);   
+
+	st7789v_write_cmd(0xC0);     
+	st7789v_write_data(0x2C);   
+
+	st7789v_write_cmd(0xC2);     
+	st7789v_write_data(0x01);   
+
+	st7789v_write_cmd(0xC3);     
+	st7789v_write_data(0x13);   
+
+	st7789v_write_cmd(0xC4);     
+	st7789v_write_data(0x20);   
+
+	st7789v_write_cmd(0xC6);     
+	st7789v_write_data(0x11);   
+
+	st7789v_write_cmd(0xD0);     
+	st7789v_write_data(0xA4);   
+	st7789v_write_data(0xA1);   
+
+	st7789v_write_cmd(0xD6);     
+	st7789v_write_data(0xA1);   
+
+	st7789v_write_cmd(0xE0);     
+	st7789v_write_data(0xD0);   
+	st7789v_write_data(0x05);   
+	st7789v_write_data(0x0A);   
+	st7789v_write_data(0x09);   
+	st7789v_write_data(0x08);   
+	st7789v_write_data(0x05);   
+	st7789v_write_data(0x2E);   
+	st7789v_write_data(0x44);   
+	st7789v_write_data(0x45);   
+	st7789v_write_data(0x0F);   
+	st7789v_write_data(0x17);   
+	st7789v_write_data(0x16);   
+	st7789v_write_data(0x2B);   
+	st7789v_write_data(0x33);   
+
+	st7789v_write_cmd(0xE1);     
+	st7789v_write_data(0xD0);   
+	st7789v_write_data(0x05);   
+	st7789v_write_data(0x0A);   
+	st7789v_write_data(0x09);   
+	st7789v_write_data(0x08);   
+	st7789v_write_data(0x05);   
+	st7789v_write_data(0x2E);   
+	st7789v_write_data(0x43);   
+	st7789v_write_data(0x45);   
+	st7789v_write_data(0x0F);   
+	st7789v_write_data(0x16);   
+	st7789v_write_data(0x16);   
+	st7789v_write_data(0x2B);   
+	st7789v_write_data(0x33);   
+
+	st7789v_write_cmd(0x3A);   
+	st7789v_write_data(0x55); 
+	
+	//st7789v_Clear(0x001f); //蓝色
+	//st7789v_Clear(0xf800); //红色
+	
+	st7789v_Clear(0x0000); //黑色
+	co_delay_100us(5000);				//Delay 50ms
+	st7789v_write_cmd(0x29);	 
+	co_delay_100us(500);				//Delay 50ms
+
 #endif
 
 #if (ST7789_135X240==1)
@@ -639,7 +761,7 @@ st7789v_write_cmd(0x2C);
 #endif
 	
 
-   st7789v_Clear(0x001f);
+  // st7789v_Clear(0x400);
 //	psram_frame_buffer_init();
 //		while(1)
 //		{
@@ -661,7 +783,15 @@ void st7789v_set_window(uint16_t x_s, uint16_t x_e, uint16_t y_s, uint16_t y_e)
 	st7789_write_16bit_data(y_s+0x14);
 	st7789_write_16bit_data(y_e+0x14);
 	#endif
-				
+	
+	#if (ST7789_240X320==1)
+	st7789_write_16bit_data(x_s);
+	st7789_write_16bit_data(x_e);
+	st7789v_write_cmd(0x2b);//行地址设置
+	st7789_write_16bit_data(y_s);
+	st7789_write_16bit_data(y_e);
+	#endif	
+	
 	#if (ST7789_135X240==1)
 	st7789_write_16bit_data(x_s+0x34);
 	st7789_write_16bit_data(x_e+0x34);
