@@ -22,8 +22,8 @@
 /* Maximal horizontal and vertical resolution to support by the library.*/
 //#define LV_HOR_RES_MAX          (360)     //(320)
 //#define LV_VER_RES_MAX          (360)     //(385)
-#define LV_HOR_RES_MAX          (400)     //(320)
-#define LV_VER_RES_MAX          (400)     //(385)
+#define LV_HOR_RES_MAX          (320)     //(320)
+#define LV_VER_RES_MAX          (240)     //(385)
 //#define LV_HOR_RES_MAX          (320)    
 //#define LV_VER_RES_MAX          (320)     
 /*====================
@@ -34,7 +34,7 @@
 #define LV_COLOR_DEPTH 16
 
 /*Swap the 2 bytes of RGB565 color. Useful if the display has an 8-bit interface (e.g. SPI)*/
-#define LV_COLOR_16_SWAP 0
+#define LV_COLOR_16_SWAP 1
 
 /*Enable more complex drawing routines to manage screens transparency.
  *Can be used if the UI is above another layer, e.g. an OSD menu or video player.
@@ -53,7 +53,7 @@
  *=========================*/
 
 /*1: use custom malloc/free, 0: use the built-in `lv_mem_alloc()` and `lv_mem_free()`*/
-#define LV_MEM_CUSTOM 1
+#define LV_MEM_CUSTOM 0
 #if LV_MEM_CUSTOM == 0
 /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
 //#  define LV_MEM_SIZE (1024 * 1024U)          /*[bytes]*/
@@ -573,7 +573,7 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 #define LV_USE_SJPG 0
 
 /*GIF decoder library*/
-#define LV_USE_GIF 0
+#define LV_USE_GIF 1
 
 /*QR code library*/
 #define LV_USE_QRCODE 0
