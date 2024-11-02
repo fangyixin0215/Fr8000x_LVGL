@@ -92,7 +92,7 @@ __attribute__((section("ram_code"))) void timer0_isr(void)
 		g_update_timeout_cnt++;
 		if((ST77903_PSRAM_BUFF!=NULL) && get_st77903_send_state() && (g_update_flag == true)) 
 		{
-					st77903_display(ST77903_PSRAM_BUFF,0);
+			st77903_display(ST77903_PSRAM_BUFF,0);
 		}
 		else
 		{
@@ -185,7 +185,7 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 
 
 
-
+extern 	void page_change_timer(void);
 
 void gui_main(void)
 {
@@ -242,7 +242,7 @@ void gui_main(void)
 	#endif
 	os_timer_init(&lv_schedule_timer, lv_schedule_timer_handler, NULL);
 	os_timer_start(&lv_schedule_timer, 10, true);
-		
+	page_change_timer();
     //lv_demo_widgets();
     //lv_demo_benchmark();
     //lv_ex_calendar_1();
