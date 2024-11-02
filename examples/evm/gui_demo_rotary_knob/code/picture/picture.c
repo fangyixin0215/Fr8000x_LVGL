@@ -345,10 +345,10 @@ const lv_img_dsc_t xn_pwoer = {
 
 const lv_img_dsc_t xn_shouye = {
 .header.always_zero = 0,
-.header.w = 210,
-.header.h = 210,
-.data_size = 44100* LV_IMG_PX_SIZE_ALPHA_BYTE,
-.header.cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
+.header.w = 320,
+.header.h = 240,
+.data_size = 76800 * LV_COLOR_SIZE / 8,
+.header.cf = LV_IMG_CF_TRUE_COLOR,
 .data = xn_shouye_map,
 };
 
