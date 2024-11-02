@@ -169,6 +169,8 @@ void lv_obj_set_style_pad_column(struct _lv_obj_t * obj, lv_coord_t value, lv_st
 
 void lv_obj_set_style_radius(struct _lv_obj_t * obj, lv_coord_t value, lv_style_selector_t selector)
 {
+	
+	co_printf("%s...value:%d\r\n",__func__,value);
     lv_style_value_t v = {
         .num = (int32_t)value
     };

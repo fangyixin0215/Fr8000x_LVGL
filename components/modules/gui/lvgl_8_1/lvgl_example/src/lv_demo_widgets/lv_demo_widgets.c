@@ -519,6 +519,7 @@ static void profile_create(lv_obj_t * parent)
 static void analytics_create(lv_obj_t * parent)
 {
     lv_obj_set_flex_flow(parent, LV_FLEX_FLOW_ROW_WRAP);
+	co_printf("%s...\r\n",__func__);
 
     static lv_coord_t grid_chart_row_dsc[] = {LV_GRID_CONTENT, LV_GRID_FR(1), 10, LV_GRID_TEMPLATE_LAST};
     static lv_coord_t grid_chart_col_dsc[] = {20, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
@@ -945,7 +946,7 @@ static void color_changer_create(lv_obj_t * parent)
     static lv_palette_t palette[] = {
             LV_PALETTE_BLUE, LV_PALETTE_GREEN, LV_PALETTE_BLUE_GREY,  LV_PALETTE_ORANGE,
             LV_PALETTE_RED, LV_PALETTE_PURPLE, LV_PALETTE_TEAL, _LV_PALETTE_LAST };
-
+	co_printf("%s...\r\n",__func__);
     lv_obj_t * color_cont = lv_obj_create(parent);
     lv_obj_remove_style_all(color_cont);
     lv_obj_set_flex_flow(color_cont, LV_FLEX_FLOW_ROW);
